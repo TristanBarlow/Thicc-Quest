@@ -21,6 +21,10 @@ public class CharacterController_2D : MonoBehaviour {
 
     public GameObject[] MovementNodes;
 
+    private float health = 1.0f;
+
+    public GameObject weaponSlot;
+
     public bool Once_Attack = false;
 
 
@@ -42,6 +46,11 @@ public class CharacterController_2D : MonoBehaviour {
             list.Add(obj.transform.position);
         }
         return list;
+    }
+
+    public void ChangeWeapon(Sprite s)
+    {
+        weaponSlot.GetComponent<SpriteRenderer>().sprite = s;
     }
 
 	// Update is called once per frame
