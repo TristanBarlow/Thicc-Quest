@@ -40,12 +40,13 @@ public class TerrainFactory : MonoBehaviour
         }
     }
 
-    public void ActivateRandomChunk(Vector2 playerPos, int seed)
+    public ChunkScript ActivateRandomChunk(Vector2 playerPos, int seed)
     {
         ChunkScript cs = c_Pool[Random.Range(0, c_Pool.Count)];
         cs.Use(playerPos);
         c_Pool.Remove(cs);
         c_Active.Add(seed, cs);
+        return cs;
     }
 
 }

@@ -27,6 +27,7 @@ public class CharacterController_2D : MonoBehaviour {
 
     public bool Once_Attack = false;
 
+    public bool IsAttacking = false;
 
     // Use this for initialization
     void Start () {
@@ -59,7 +60,6 @@ public class CharacterController_2D : MonoBehaviour {
 
         spriteOrder_Controller();
 
-
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Once_Attack = false;
@@ -68,7 +68,7 @@ public class CharacterController_2D : MonoBehaviour {
 
             m_rigidbody.velocity = new Vector3(0, 0, 0);
 
-
+            IsAttacking = true;
         }
 
         else if (Input.GetKeyDown(KeyCode.Mouse1))
@@ -205,11 +205,14 @@ public class CharacterController_2D : MonoBehaviour {
     }
 
 
- 
+
     //   Sword,Dagger,Spear,Punch,Bow,Gun,Grenade
 
 
-  
+    public void FinishedAttack()
+    {
+        IsAttacking = false;
+    }
 
   
 }

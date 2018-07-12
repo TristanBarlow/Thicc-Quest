@@ -5,10 +5,15 @@ using UnityEngine;
 
 public class FactoryManager : MonoBehaviour
 {
-
+    public TerrainFactory t_Factory;
     public int c_Unique = 5;
     public int c_Width = 10;
     public int c_Height = 10;
+
+    public WorldObjectFactory w_Factory;
+    public int maxPerChunk = 5;
+    public int minPerChunk = 2;
+    public int maxObj = 30;
 
     public bool load = false;
 
@@ -19,7 +24,9 @@ public class FactoryManager : MonoBehaviour
 
     public List<Vector2> playerNodes;
 
-    public TerrainFactory t_Factory;
+
+
+
 
     public Dictionary<int, Vector2> ActiveSeeds =  new Dictionary<int, Vector2>();
 
@@ -34,6 +41,8 @@ public class FactoryManager : MonoBehaviour
     public void InitGrasslandChunks()
     {
         t_Factory.Init(AssetManager.Instance.GetTerrainSprites(), AssetManager.Instance.GetWallSprites(), c_Unique, c_Width, c_Height);
+        w_Factory.Init(minPerChunk, maxPerChunk, maxObj);
+        loaded = true;
     }
 
 	// Update is called once per frame
@@ -42,7 +51,7 @@ public class FactoryManager : MonoBehaviour
         if (load && !loaded)
         {
             InitGrasslandChunks();
-            loaded = true;
+           
             p_Script = player.GetComponent<CharacterController_2D>();
             playerNodes = p_Script.GetNodePos();
 
@@ -73,7 +82,9 @@ public class FactoryManager : MonoBehaviour
                 ActiveSeeds.Add(seed, roundedPos);
 
                 //New seed found Do all loading factory call here
-                t_Factory.ActivateRandomChunk(roundedPos, seed);
+                ChunkScript chunk = t_Factory.ActivateRandomChunk(roundedPos, seed);
+
+                w_Factory.AddWorldObjectsToChunk(seed, chunk);
             }
         }
     }
@@ -92,6 +103,8 @@ public class FactoryManager : MonoBehaviour
                 int key = ActiveSeeds.ElementAt(i).Key;
                 //Seed is out of bounds, do all destroying here.
                 t_Factory.DeactivateChunk(key);
+
+                w_Factory.RemoveObjectsFromChunk(key);
 
                 ActiveSeeds.Remove(key);
             }

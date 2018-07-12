@@ -2,15 +2,64 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldObjectFactory : MonoBehaviour {
+public class WorldObjectFactory : MonoBehaviour
+{
+    public GameObject chestPrefab;
 
-	// Use this for initialization
-	void Start () {
+    private int MaxObjPerChunk;
+    private int MinObjPerChunk;
+
+    private Dictionary<int,List<ChestScript>> c_Active = new Dictionary<int, List<ChestScript>>();
+    private List<ChestScript> c_Pool = new List<ChestScript>();
+
+    // Use this for initialization
+    void Start ()
+    {
 		
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    public void Init(int minPer, int maxPer,int totalMax)
+    {
+        MinObjPerChunk = minPer;
+        MaxObjPerChunk = maxPer;
+        for (int i = 0; i < totalMax; i++)
+        {
+            GameObject obj = Instantiate(chestPrefab);
+            ChestScript cs = obj.GetComponent<ChestScript>();
+            cs.SetSpriteRenderer(obj.GetComponent<SpriteRenderer>());
+            cs.Hide();
+            c_Pool.Add(cs);
+        }
+    }
+
+    public void AddWorldObjectsToChunk(int seed, ChunkScript chunk)
+    {
+        List<ChestScript> chunkChests = new List<ChestScript>();
+        for (int i = 0; i < Random.Range(MinObjPerChunk, MaxObjPerChunk); i++)
+        {
+            if (c_Pool.Count < 1) return;
+
+            GameObject tile = chunk.GetRandomTile();
+
+            ChestScript chest = c_Pool[0];
+
+            chest.Init(tile.transform.position);
+
+            chunkChests.Add(chest);
+
+            c_Pool.Remove(chest);
+        }
+        c_Active.Add(seed, chunkChests);
+    }
+
+    public void RemoveObjectsFromChunk(int seed)
+    {
+        if (!c_Active.ContainsKey(seed)) return;
+
+        foreach (ChestScript chest in c_Active[seed])
+        {
+            chest.Hide();
+        }
+        c_Active.Remove(seed);
+    }
 }

@@ -12,6 +12,8 @@ public class AssetManager : MonoBehaviour {
     private Sprite[] w_Sprites;
     private float s_Size;
 
+    public ChestData[] Chests;
+
     public void InitGrassLand()
     {
         t_Sprites = Resources.LoadAll<Sprite>("Sprites/Environment/Grassland");
@@ -21,6 +23,22 @@ public class AssetManager : MonoBehaviour {
 
     public Sprite[] GetWallSprites() { return w_Sprites; }
     public Sprite[] GetTerrainSprites() { return t_Sprites; }
+
+    public ChestData GetChestFromID(int ID)
+    {
+        foreach (ChestData c in Chests)
+        {
+            if (c.ID == ID) return c;
+        }
+        return null; 
+    }
+
+
+    public ChestData GetRandomChest()
+    {
+        return Chests[Random.Range(0, Chests.Length)];
+    }
+
     public float GetSpriteSize() { return s_Size; }
 
     // Use this for initialization

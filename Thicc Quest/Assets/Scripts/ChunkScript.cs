@@ -67,6 +67,7 @@ public class ChunkScript : MonoBehaviour
         float y = (transform.position.y - height / 2) + (j * s.bounds.size.y);
         GameObject obj = Instantiate(def, new Vector2(x, y), transform.rotation, transform);
         obj.GetComponent<SpriteRenderer>().sprite = s;
+        tiles.Add(obj);
     }
 
     public void Use(Vector2 newLocation)
@@ -94,6 +95,12 @@ public class ChunkScript : MonoBehaviour
     {
         return arr[Random.Range(0, arr.Length)];
     }
+
+    public GameObject GetRandomTile()
+    {
+        return tiles[Random.Range(0, tiles.Count)];
+    }
+
 
     public float GetSpriteSize()
     {
