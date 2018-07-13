@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChestScript : MonoBehaviour
+public class ChestScript : InteractParent
 {
     bool IsOpened = false;
 
@@ -45,6 +45,12 @@ public class ChestScript : MonoBehaviour
     {
         IsOpened = false;
         gameObject.SetActive(false);
+    }
+
+    public override void Interact()
+    {
+        base.Interact();
+        TryOpen();
     }
 
 }

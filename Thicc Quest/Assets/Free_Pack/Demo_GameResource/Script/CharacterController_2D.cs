@@ -63,7 +63,6 @@ public class CharacterController_2D : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Once_Attack = false;
-            Debug.Log("Lclick");
             m_Animator.SetTrigger("Attack");
 
             m_rigidbody.velocity = new Vector3(0, 0, 0);

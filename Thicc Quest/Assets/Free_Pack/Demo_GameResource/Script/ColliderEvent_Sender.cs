@@ -11,17 +11,19 @@ public class ColliderEvent_Sender : MonoBehaviour {
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-    
-        if (m_parent.Once_Attack)
-            return;
+   
 
         //other.GetComponent<WoodDoll_Mgr>().Sword_Hitted();
-        Debug.Log("hit::" + other.name);
 
         if (this.GetComponent<BoxCollider2D>().enabled)
         {
             m_parent.Once_Attack = true;
 
+        }
+
+        if (other.GetComponent<InteractParent>())
+        {
+            other.GetComponent<InteractParent>().Hit(0.1f);
         }
 
     }

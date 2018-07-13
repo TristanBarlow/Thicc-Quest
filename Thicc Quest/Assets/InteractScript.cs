@@ -32,25 +32,12 @@ public class InteractScript : MonoBehaviour
                 if (c != null)
                 {
                     Debug.Log(c.gameObject);
-                    if (c.gameObject.GetComponent<ChestScript>())
+                    if (c.gameObject.GetComponent<InteractParent>())
                     {
-                        c.gameObject.GetComponent<ChestScript>().TryOpen();
+                        c.gameObject.GetComponent<InteractParent>().Interact();
                     }
                 }
             }
-            //RaycastHit2D[] hits = new RaycastHit2D[12];
-            //Physics2D.Raycast(transform.position, transform.forward, filter, hits, InteractRange);
-            //foreach (RaycastHit2D hit in hits)
-            //{
-            //    if (hit.collider != null)
-            //    {
-            //        Debug.Log(hit.collider.gameObject);
-            //        if (hit.collider.gameObject.GetComponent<ChestScript>())
-            //        {
-            //            hit.collider.gameObject.GetComponent<ChestScript>().TryOpen();
-            //        }
-            //    }
-            //}
         }
         else
         {
