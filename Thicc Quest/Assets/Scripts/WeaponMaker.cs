@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using System.IO;
 using System.Collections.Generic;
 
-public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler{
+public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler{
 
     public Sprite baseSprite;
 
@@ -82,6 +82,11 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     }
 
     public void OnPointerUp(PointerEventData eventData)
+    {
+        draw = false;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
     {
         draw = false;
     }
