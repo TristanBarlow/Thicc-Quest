@@ -42,8 +42,6 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
 
     bool draw = false;
 
-    private string SaveLocation = "/Resources/Sprites/PlayerMade/";
-
     // Use this for initialization
     void Start ()
     {
@@ -96,7 +94,7 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     public void SaveImage()
     {
         if (nameField.text.Length <= 2) return;
-        string filePath = Application.dataPath + SaveLocation + nameField.text + ".png";
+        string filePath = Application.persistentDataPath + nameField.text + ".png";
         if (File.Exists(filePath)) return;
 
         byte[] bytes = image.sprite.texture.EncodeToPNG();
