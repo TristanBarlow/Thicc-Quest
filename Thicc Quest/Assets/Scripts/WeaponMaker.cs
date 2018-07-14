@@ -51,7 +51,6 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
 
             r.x = (r.x) * img.sprite.texture.width;
             r.y = (r.y)* img.sprite.texture.height;
-            Debug.Log(img.rectTransform.position);
             img.sprite.texture.SetPixel((int)(r.x), (int)(r.y), Color.black);
             img.sprite.texture.Apply();
         }
@@ -74,12 +73,12 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("Entered");
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         draw = true;
+        WeaponRecognition.Instance.ScanTexture(img.sprite.texture, WeaponRecognition.oneHanderLabel);
     }
 
     public void OnPointerUp(PointerEventData eventData)
