@@ -49,7 +49,7 @@ public class WeaponRecognition : MonoBehaviour
         Debug.Log(counter);
     }
 
-    public void ScanTexture(Texture2D tex, string label)
+    public bool ScanTexture(Texture2D tex, string label)
     {
         Color[] arr  = tex.GetPixels();
         int counter = 0;
@@ -65,12 +65,14 @@ public class WeaponRecognition : MonoBehaviour
         if (Mathf.Abs(weaponDict[label].Compare(w_Alphas)) < weaponDict[label].highAlphaBound * accuracy)
         {
             Debug.Log("Match");
+            return true;
         }
         else { Debug.Log("Not match"); }
         Debug.Log("High alpha" + HighAlpha);
         Debug.Log("Orignal Alpha high " + weaponDict[label].highAlphaBound);
         Debug.Log("Finished Scan");
         Debug.Log("Pixels: " + counter);
+        return false;
     }
 }
 
