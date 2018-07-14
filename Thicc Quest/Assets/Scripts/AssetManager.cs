@@ -12,6 +12,7 @@ public class AssetManager : MonoBehaviour {
     private Sprite[] w_Sprites;
     private float s_Size;
 
+    public OreParent[] ores;
     public ChestData[] Chests;
 
     public void InitGrassLand()
@@ -40,6 +41,15 @@ public class AssetManager : MonoBehaviour {
     }
 
     public float GetSpriteSize() { return s_Size; }
+
+    public OreParent GetOreOfType(OreType ore)
+    {
+        foreach (OreParent op in ores)
+        {
+            if (op.type == ore) return op;
+        }
+        return ores[0];
+    }
 
     // Use this for initialization
     void Start ()

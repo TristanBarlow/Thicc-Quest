@@ -13,7 +13,7 @@ public class MerchantScript : InteractParent
     public override void Interact()
     {
         base.Interact();
-        Debug.Log("You talk to the Shady merchant");
+        WeaponMaker.Instance.gameObject.SetActive(true);
     }
 
     public override void Hit(float rawDamage)
