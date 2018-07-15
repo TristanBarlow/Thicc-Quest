@@ -34,7 +34,6 @@ public class AssetManager : MonoBehaviour {
         return null; 
     }
 
-
     public ChestData GetRandomChest()
     {
         return Chests[Random.Range(0, Chests.Length)];
@@ -50,16 +49,33 @@ public class AssetManager : MonoBehaviour {
         }
         return ores[0];
     }
-
+   
     // Use this for initialization
     void Start ()
     {
         Instance = this;
         InitGrassLand();
+        SaveLoadClass.LoadWeaponImages();
     }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+
+
+    public List<SpriteData> weaponSprites;
+    public Sprite GetSpriteFromId(string id)
+    {
+        foreach(SpriteData sd in weaponSprites)
+        {
+            if (sd.ID == id) return sd.sprite;
+        }
+        return null;
+    }
+    public void AddSpriteData(SpriteData sd)
+    {
+        weaponSprites.Add(sd);
+    }
 }

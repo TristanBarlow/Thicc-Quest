@@ -10,6 +10,10 @@ public class ChestScript : InteractParent
 
     private SpriteRenderer c_Sprite;
 
+    public int MaxItemDrop = 4;
+
+    public int SpawnRadius = 3;
+
     public void TryOpen()
     {
         if (!IsOpened)
@@ -17,7 +21,15 @@ public class ChestScript : InteractParent
             IsOpened = true;
             c_Sprite.sprite = chestData.c_Opened;
 
-            //TO DO: Give item
+            Vector2 mPos = transform.position;
+            for(int i =0; i < Random.Range(1,MaxItemDrop);i++)
+            {
+                float rx = Random.Range(-SpawnRadius, SpawnRadius);
+                float ry = Random.Range(-SpawnRadius, SpawnRadius);
+                Vector2 v2 = new Vector2(rx + mPos.x, ry + mPos.y);
+                LootFactory.Instance.SpawnLoot(v2);
+            }
+            
         }
     }
 

@@ -65,8 +65,7 @@ public class ChunkScript : MonoBehaviour
     {
         float x = (transform.position.x - width / 2) + (i * s.bounds.size.x);
         float y = (transform.position.y - height / 2) + (j * s.bounds.size.y);
-        GameObject obj = Instantiate(def, new Vector2(x, y), transform.rotation, transform);
-        obj.transform.SetParent(transform);
+        GameObject obj = Instantiate(def, new Vector2(x, y), transform.rotation, gameObject.transform);
         obj.GetComponent<SpriteRenderer>().sprite = s;
         tiles.Add(obj);
     }

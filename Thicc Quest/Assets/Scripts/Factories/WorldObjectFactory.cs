@@ -24,7 +24,7 @@ public class WorldObjectFactory : MonoBehaviour
         MaxObjPerChunk = maxPer;
         for (int i = 0; i < totalMax; i++)
         {
-            GameObject obj = Instantiate(chestPrefab);
+            GameObject obj = Instantiate(chestPrefab, gameObject.transform);
             ChestScript cs = obj.GetComponent<ChestScript>();
             cs.SetSpriteRenderer(obj.GetComponent<SpriteRenderer>());
             cs.Hide();
@@ -35,7 +35,9 @@ public class WorldObjectFactory : MonoBehaviour
     public void AddWorldObjectsToChunk(int seed, ChunkScript chunk)
     {
         List<ChestScript> chunkChests = new List<ChestScript>();
-        for (int i = 0; i < Random.Range(MinObjPerChunk, MaxObjPerChunk); i++)
+        int numToSpawn = Random.Range(MinObjPerChunk, MaxObjPerChunk);
+        if (c_Pool.Count < numToSpawn) numToSpawn = c_Pool.Count;
+        for (int i = 0; i <numToSpawn; i++)
         {
             if (c_Pool.Count < 1) return;
 

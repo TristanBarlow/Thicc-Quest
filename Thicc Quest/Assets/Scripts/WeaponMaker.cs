@@ -94,13 +94,14 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     public void SaveImage()
     {
         if (nameField.text.Length <= 2) return;
-        string filePath = Application.persistentDataPath + nameField.text + ".png";
-        if (File.Exists(filePath)) return;
 
-        byte[] bytes = image.sprite.texture.EncodeToPNG();
-        File.WriteAllBytes(filePath, bytes);
+        AssetManager.Instance.AddSpriteData(new SpriteData(nameField.text, image.sprite));
 
-        gameObject.SetActive(false);
+        WeaponData wd = new WeaponData(nameField.text, image.sprite, nameField.text, 0.1f, new AffinityData() );
+
+        SaveLoadClass.SaveWeapon(image.sprite.texture, nameField.text, wd);
+
+        LootFactory.Instance.AddWeaponsToLoot(wd);
         //To Do: Generate weapon stuffs.
     }
 

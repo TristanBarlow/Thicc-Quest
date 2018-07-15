@@ -25,9 +25,6 @@ public class FactoryManager : MonoBehaviour
     public List<Vector2> playerNodes;
 
 
-
-
-
     public Dictionary<int, Vector2> ActiveSeeds =  new Dictionary<int, Vector2>();
 
     private float s_size;

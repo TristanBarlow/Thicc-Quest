@@ -31,7 +31,6 @@ public class InteractScript : MonoBehaviour
             {
                 if (c != null)
                 {
-                    Debug.Log(c.gameObject);
                     if (c.gameObject.GetComponent<InteractParent>())
                     {
                         c.gameObject.GetComponent<InteractParent>().Interact();
