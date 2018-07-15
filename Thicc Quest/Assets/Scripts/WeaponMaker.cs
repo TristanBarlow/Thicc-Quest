@@ -95,13 +95,15 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     {
         if (nameField.text.Length <= 2) return;
 
-        AssetManager.Instance.AddSpriteData(new SpriteData(nameField.text, image.sprite));
-
         WeaponData wd = new WeaponData(nameField.text, image.sprite, nameField.text, 0.1f, new AffinityData() );
 
         SaveLoadClass.SaveWeapon(image.sprite.texture, nameField.text, wd);
 
+        SaveLoadClass.LoadSprite(nameField.text);
+
         LootFactory.Instance.AddWeaponsToLoot(wd);
+
+        gameObject.SetActive(false);
         //To Do: Generate weapon stuffs.
     }
 

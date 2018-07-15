@@ -106,6 +106,19 @@ public  class SaveLoadClass
         }
     }
 
+    public static void LoadSprite(string name)
+    {
+        string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir + name + ".png";
+        if (!File.Exists(dirPath)) return;
+        byte[] FileData = File.ReadAllBytes(dirPath);
+        Texture2D Tex2D = new Texture2D(2, 2);           // Create new "empty" texture
+        if (Tex2D.LoadImage(FileData))
+        {
+            Sprite s = Sprite.Create(Tex2D, new Rect(0, 0, Tex2D.width, Tex2D.height), new Vector2(0.5f, 0.5f));
+            AssetManager.Instance.AddSpriteData(new SpriteData(name, s));
+        }
+    }
+
     public static void LoadWeaponData()
     {
         string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir;
@@ -126,20 +139,6 @@ public  class SaveLoadClass
                 Debug.Log("Failed to read exsisting weapon data" + ex);
             }
         }
-    }
-
-    public static Texture2D LoadSprites(string path)
-    {
-
-        Texture2D Tex2D;
-        byte[] FileData;
-
-        if (File.Exists(path))
-        {
-            
-        }
-      
-        return null;
     }
 
     public static FileStream ResetFile(string destination)

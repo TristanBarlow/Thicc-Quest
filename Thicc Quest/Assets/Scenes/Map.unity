@@ -462,6 +462,7 @@ MonoBehaviour:
     name: 
     uID: 
     spriteID: 
+    Quantity: 0
     dmg: 0
 --- !u!1 &90193033
 GameObject:
@@ -1301,11 +1302,13 @@ MonoBehaviour:
     name: ShortSword
     uID: 0
     spriteID: w0
+    Quantity: 0
     dmg: 0.1
   - type: 1
     name: DarkSword
     uID: 1
     spriteID: w1
+    Quantity: 0
     dmg: 0.2
   lootPrefab: {fileID: 1964639346972694, guid: 84c66f9eea2f7cf40a99ce5c2fcec90c, type: 2}
 --- !u!1 &293386592 stripped
@@ -4945,7 +4948,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
