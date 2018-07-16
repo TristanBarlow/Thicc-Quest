@@ -49,6 +49,8 @@ public class WorldObjectFactory : MonoBehaviour
 
             chunkChests.Add(chest);
 
+           
+
             c_Pool.Remove(chest);
         }
         c_Active.Add(seed, chunkChests);
@@ -60,7 +62,9 @@ public class WorldObjectFactory : MonoBehaviour
 
         foreach (ChestScript chest in c_Active[seed])
         {
+            c_Pool.Add(chest);
             chest.Hide();
+            
         }
         c_Active.Remove(seed);
     }

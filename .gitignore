@@ -34,3 +34,4 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+/Thicc Quest/Assets/Resources/Sprites/PlayerMade
