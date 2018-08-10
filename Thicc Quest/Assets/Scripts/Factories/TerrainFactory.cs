@@ -32,6 +32,7 @@ public class TerrainFactory : MonoBehaviour
         for (int i = 0; i < c_Number; i++)
         {
             GameObject obj = Instantiate(chunk);
+            obj.transform.parent = gameObject.transform;
             ChunkScript cs = obj.GetComponent<ChunkScript>();
             cs.InitWalledTerrain(t_Sprites, w_Sprites, c_Width, c_Height);
             cs.Hide();

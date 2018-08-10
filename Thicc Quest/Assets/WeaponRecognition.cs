@@ -9,12 +9,15 @@ public class WeaponRecognition : MonoBehaviour
     public static WeaponRecognition Instance { set; get;  }
 
     public const string oneHanderLabel = "1HSword";
+    public static string savePath = "";
 
-    Dictionary<string, WeaponReconSave> weaponDict = new Dictionary<string, WeaponReconSave>();
+    Dictionary<string, TextureProfile> weaponDict = new Dictionary<string, TextureProfile>();
 
     public float accuracy = 0.05f;
 
     public float highAlphaCutoff = 0.9f;
+
+    TextureProfile currentWeapon;
 
     private void Start()
     {
@@ -22,19 +25,27 @@ public class WeaponRecognition : MonoBehaviour
     }
     private void Awake()
     {
-        string savePath = Application.persistentDataPath;
-        WeaponReconSave oneH = new WeaponReconSave(savePath, oneHanderLabel);
-        weaponDict.Add(oneHanderLabel, oneH);
+        savePath = Application.persistentDataPath + "/TextureProfiles";
 
+        if (!Directory.Exists(savePath)) Directory.CreateDirectory(savePath);
     }
 
-    public void Train(Texture2D tex, string label)
+    public void LoadWeapon(Sprite s, string weaponLabel)
+    {
+        TextureProfile weap = new TextureProfile(savePath, weaponLabel);
+        if (!weap.Trained)
+        {
+            Train(s.texture, ref weap);
+        }
+        currentWeapon = weap;
+    }
+
+    public void Train(Texture2D tex, ref TextureProfile wrs)
     {
         Color[] arr = tex.GetPixels();
         int counter = 0;
         int HighAlpha = 0;
         Debug.Log("started Scan");
-        WeaponReconSave wrs = weaponDict[label];
         wrs.ClearWeights();
         foreach (Color c in arr)
         {
@@ -43,14 +54,22 @@ public class WeaponRecognition : MonoBehaviour
             counter++;
         }
         wrs.highAlphaBound = HighAlpha;
+        wrs.Trained = true;
         wrs.Save();
         Debug.Log("Finished Scan");
         Debug.Log("High alpha" + HighAlpha);
         Debug.Log(counter);
     }
 
-    public bool ScanTexture(Texture2D tex, string label)
+    public bool CheckTexture(Texture2D tex)
     {
+        if (currentWeapon == null) return false;
+        else return ScanActiveTexture(tex, currentWeapon);
+    }
+
+    public bool ScanActiveTexture(Texture2D tex, TextureProfile baseWeap)
+    {
+        
         Color[] arr  = tex.GetPixels();
         int counter = 0;
         Debug.Log("started Scan");
@@ -62,14 +81,14 @@ public class WeaponRecognition : MonoBehaviour
             if (c.a > highAlphaCutoff) HighAlpha++;
             counter++;
         }
-        if (Mathf.Abs(weaponDict[label].Compare(w_Alphas)) < weaponDict[label].highAlphaBound * accuracy)
+        if (Mathf.Abs(baseWeap.Compare(w_Alphas)) < baseWeap.highAlphaBound * accuracy)
         {
             Debug.Log("Match");
             return true;
         }
         else { Debug.Log("Not match"); }
         Debug.Log("High alpha" + HighAlpha);
-        Debug.Log("Orignal Alpha high " + weaponDict[label].highAlphaBound);
+        Debug.Log("Orignal Alpha high " + baseWeap.highAlphaBound);
         Debug.Log("Finished Scan");
         Debug.Log("Pixels: " + counter);
         return false;
@@ -78,19 +97,26 @@ public class WeaponRecognition : MonoBehaviour
 
 
 [System.Serializable]
-public class WeaponReconSave
+public class TextureProfile
 {
     string weaponLabel = "1HSword";
     string SavePath;
+    bool trained = false;
+
+    public int TrainedSize = 0;
+
     List<float> indexWeightings;
+
     public int highAlphaBound = 0;
 
-    public WeaponReconSave(string path, string label)
+    public TextureProfile(string path, string label)
     {
         weaponLabel = label;
         SavePath = path + "/" + label + ".dat";
         TryLoad();
     }
+
+    public bool Trained { set { trained = value; } get { return trained; } }
 
     public void Save()
     {
@@ -107,20 +133,30 @@ public class WeaponReconSave
 
     private void TryLoad()
     {
-        FileStream file;
-        if (File.Exists(SavePath)) file = File.OpenRead(SavePath);
-        else
+        FileStream file = null;
+        try
         {
-            NewInit();
-            return;
+            if (File.Exists(SavePath)) file = File.OpenRead(SavePath);
+            else
+            {
+                NewInit();
+                return;
+            }
+            trained = true;
+            BinaryFormatter bf = new BinaryFormatter();
+            TextureProfile wrs = (TextureProfile)bf.Deserialize(file);
+            file.Close();
+            OldInit(wrs);
+            Debug.Log(indexWeightings.Count);
+            Debug.Log("Loaded file from: " + SavePath);
         }
-
-        BinaryFormatter bf = new BinaryFormatter();
-        WeaponReconSave wrs = (WeaponReconSave)bf.Deserialize(file);
-        file.Close();
-        OldInit(wrs);
-        Debug.Log(indexWeightings.Count);
-        Debug.Log("Loaded file from: " + SavePath);
+        catch
+        {
+            if(file != null)  file.Close();
+            Debug.Log("Failed load path " + SavePath);
+            File.Delete(SavePath);
+        }
+    
     }
 
     private void NewInit()
@@ -128,7 +164,7 @@ public class WeaponReconSave
         indexWeightings = new List<float>();
     }
 
-    private void OldInit(WeaponReconSave wrs)
+    private void OldInit(TextureProfile wrs)
     {
         indexWeightings = wrs.indexWeightings;
         weaponLabel = wrs.weaponLabel;

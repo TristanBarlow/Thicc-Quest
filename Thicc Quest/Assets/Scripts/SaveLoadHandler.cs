@@ -91,8 +91,9 @@ public  class SaveLoadClass
     public static void LoadWeaponImages()
     {
         string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir;
-        DirectoryInfo di = new DirectoryInfo(dirPath);
-        FileInfo[] files = di.GetFiles("*.png");
+        FileInfo[] files = TryGetFiles(dirPath, "*.png");
+        if (files == null) return;
+
         foreach (FileInfo fi in files)
         {
             byte[] FileData = File.ReadAllBytes(dirPath + fi.Name);
@@ -119,11 +120,27 @@ public  class SaveLoadClass
         }
     }
 
+    public static FileInfo[] TryGetFiles(string dir, string ext)
+    {
+        DirectoryInfo di = new DirectoryInfo(dir);
+        FileInfo[] fi = null;
+        try
+        {
+            return di.GetFiles(ext);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("No files found");
+            return null;
+        }
+
+    }
+
     public static void LoadWeaponData()
     {
         string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir;
-        DirectoryInfo di = new DirectoryInfo(dirPath);
-        FileInfo[] files = di.GetFiles("*.dat");
+        FileInfo[] files = TryGetFiles(dirPath, "*.dat");
+        if (files == null) return;
         foreach (FileInfo fi in files)
         {
             try

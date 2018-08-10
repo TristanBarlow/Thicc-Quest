@@ -13,7 +13,7 @@ public class MerchantScript : InteractParent
     public override void Interact()
     {
         base.Interact();
-        WeaponMaker.Instance.gameObject.SetActive(true);
+        UIManager.Instance.ChangeCanvas("WeaponCreation");
     }
 
     public override void Hit(float rawDamage)

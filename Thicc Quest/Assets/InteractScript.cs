@@ -22,6 +22,7 @@ public class InteractScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        if (!UIManager.Instance.ShouldUpdatePlayer()) return;
         if (Input.GetKeyDown(KeyCode.E))
         {
             Interact = true;

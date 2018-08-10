@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler{
 
-    public static WeaponMaker Instance { set; get; }
     [System.Serializable]
     public enum Brush
     {
@@ -28,36 +27,34 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     private Sprite spr;
     private Rect bound;
 
-
-    public OreParent currentOre = new OreParent(OreType.Steel, 0, Color.gray);
+    private OreParent currentOre = new OreParent(OreType.Steel, 0, Color.gray);
 
     public float AlphaCorrection = 0.3f;
 
     public Brush brush;
-
     public int b_width = 2;
     public int b_height = 2;
-
     public int b_radius = 2;
 
     bool draw = false;
 
+    Vector2 oldPos;
     // Use this for initialization
     void Start ()
     {
-        Instance = this;
+
         ResetSprite();
 
         m_Raycaster = GetComponent<GraphicRaycaster>();
         //Fetch the Event System from the Scene
-
-        gameObject.SetActive(false);
     }
 
     private void OnEnable()
     {
         ResetSprite();
+        WeaponRecognition.Instance.LoadWeapon(image.sprite, "1h");
     }
+
     // Update is called once per frame
     void FixedUpdate ()
     {
@@ -66,35 +63,40 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
             Vector2 loc = GetLocationOnSprite();
             int x = (int)loc.x;
             int y = (int)loc.y;
-
-            switch (brush)
+            if (!IsBrushOverflow(x, y, b_width, b_height))
             {
-                case Brush.Square:
-                    {
-                        if(!IsBrushOverflow(x, y, b_width, b_height)) SquareBrushDraw(x, y);
-                        break;
-                    }
-                case Brush.Rings:
-                    {
-                        if(!IsBrushOverflow(x, y, b_radius, b_radius))RingsBrushDraw(x, y);
-                        break;
-                    }
-                case Brush.Circle:
-                    {
-                        if(!IsBrushOverflow(x, y, b_radius, b_radius))CircleDraw(x,y);
-                        break;
-                    }
+                switch (brush)
+                {
+                    case Brush.Square:
+                        {
+                            SquareBrushDraw(x, y);
+                            break;
+                        }
+                    case Brush.Rings:
+                        {
+                           RingsBrushDraw(x, y);
+                            break;
+                        }
+                    case Brush.Circle:
+                        {
+                            CircleDraw(x, y);
+                            break;
+                        }
+                }
             }
-           
             image.sprite.texture.Apply();
             currentOre.col.a = 1;
+            loc = oldPos;
         }
 	}
 
     public void SaveImage()
     {
-        if (nameField.text.Length <= 2) return;
-
+        if (nameField.text.Length <= 2)
+        {
+            MessageManager.Instance.NewMessage("Come on, you need a longer name that that...");
+            return;
+        }
         WeaponData wd = new WeaponData(nameField.text, image.sprite, nameField.text, 0.1f, new AffinityData() );
 
         SaveLoadClass.SaveWeapon(image.sprite.texture, nameField.text, wd);
@@ -103,6 +105,7 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
 
         LootFactory.Instance.AddWeaponsToLoot(wd);
 
+        MessageManager.Instance.NewMessage("You have made a weapon... Good for you.");
         gameObject.SetActive(false);
         //To Do: Generate weapon stuffs.
     }
@@ -120,7 +123,7 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     public void OnPointerUp(PointerEventData eventData)
     {
         draw = false;
-        if (!WeaponRecognition.Instance.ScanTexture(image.sprite.texture, WeaponRecognition.oneHanderLabel))
+        if (!WeaponRecognition.Instance.CheckTexture(image.sprite.texture))
         {
             image.sprite.texture.SetPixels(tempTex.GetPixels());
             image.sprite.texture.Apply();
@@ -132,7 +135,7 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         if (draw)
         {
             draw = false;
-            if (!WeaponRecognition.Instance.ScanTexture(image.sprite.texture, WeaponRecognition.oneHanderLabel))
+            if (!WeaponRecognition.Instance.CheckTexture(image.sprite.texture))
             {
                 image.sprite.texture.SetPixels(tempTex.GetPixels());
                 image.sprite.texture.Apply();
