@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Inventory
+public class Inventory:ISave
 {
 
     private List<ItemData> items = new List<ItemData>();
@@ -102,5 +102,20 @@ public class Inventory
             if (a.name == name) return a;
         }
         return null;
+    }
+
+    public void LoadSuccess(object obj)
+    {
+        Inventory i = (Inventory)obj;
+        items = i.items;
+        weapons = i.weapons;
+        armour = i.armour;
+        PrintInventory();
+    }
+
+    public void LoadFailed()
+    {
+        Debug.Log("Failed Inventory load");
+        items = new List<ItemData>();
     }
 }

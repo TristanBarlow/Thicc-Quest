@@ -15,7 +15,7 @@ public class InventoryManager : MonoBehaviour
 	void Start ()
     {
         Instance = this;
-        inventory = SaveLoadClass.LoadInventory();
+        SaveLoadClass.Load(inventory, "/Inventory.dat", true);
 	}
 
 
@@ -23,7 +23,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (i.type == ItemType.weapon) ChangeWeapon((WeaponData)i);
         inventory.AddItem(i);
-        SaveLoadClass.SaveInventory(inventory);
+        SaveLoadClass.Save(inventory, "/Inventory.dat", true);
     }
 
     public void ChangeWeapon(WeaponData w)

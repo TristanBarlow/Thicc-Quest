@@ -97,7 +97,7 @@ public class WeaponRecognition : MonoBehaviour
 
 
 [System.Serializable]
-public class TextureProfile
+public class TextureProfile:ISave
 {
     string weaponLabel = "1HSword";
     string SavePath;
@@ -118,47 +118,7 @@ public class TextureProfile
 
     public bool Trained { set { trained = value; } get { return trained; } }
 
-    public void Save()
-    {
-        FileStream file;
-        if (File.Exists(SavePath)) file = File.OpenWrite(SavePath);
-        else file = File.Create(SavePath);
-
-
-        //serialise and save our data
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(file, this);
-        file.Close();
-    }
-
-    private void TryLoad()
-    {
-        FileStream file = null;
-        try
-        {
-            if (File.Exists(SavePath)) file = File.OpenRead(SavePath);
-            else
-            {
-                NewInit();
-                return;
-            }
-            trained = true;
-            BinaryFormatter bf = new BinaryFormatter();
-            TextureProfile wrs = (TextureProfile)bf.Deserialize(file);
-            file.Close();
-            OldInit(wrs);
-            Debug.Log(indexWeightings.Count);
-            Debug.Log("Loaded file from: " + SavePath);
-        }
-        catch
-        {
-            if(file != null)  file.Close();
-            Debug.Log("Failed load path " + SavePath);
-            File.Delete(SavePath);
-        }
-    
-    }
-
+  
     private void NewInit()
     {
         indexWeightings = new List<float>();
@@ -209,5 +169,26 @@ public class TextureProfile
         }
         Debug.Log("Finished compare. Difference = " + differenceTotal);
         return differenceTotal;
+    }
+
+    public void Save()
+    {
+        SaveLoadClass.Save(this, SavePath);
+    }
+
+    public void TryLoad()
+    {
+        SaveLoadClass.Load(this, SavePath);
+    }
+    public void LoadSuccess(object obj)
+    {
+        TextureProfile wrs = (TextureProfile)obj;
+        OldInit(wrs);
+    }
+
+    public void LoadFailed()
+    {
+        Debug.Log("Failed load");
+        NewInit();
     }
 }

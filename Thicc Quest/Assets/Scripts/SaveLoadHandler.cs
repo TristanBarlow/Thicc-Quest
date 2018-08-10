@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
-public  class SaveLoadClass
+public class SaveLoadClass
 {
 
     public const string PlayerMadeDir = "/PlayerMadeDir";
@@ -13,63 +13,12 @@ public  class SaveLoadClass
     public static String weaponPath = "";
     public const string InvetoryName = "/Inventory.dat";
 
-    public static void SaveInventory(Inventory i)
-    {
-        string filePath = Application.persistentDataPath + "/Inventory.dat";
-
-        FileStream file;
-        //try and get the save game file
-        if (File.Exists(filePath)) file = File.OpenWrite(filePath);
-        else file = ResetFile(filePath);
-
-
-        //serialise and save our data
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(file, i);
-        file.Close();
-    }
-
-    public static Inventory LoadInventory()
-    {
-        string filePath = Application.persistentDataPath + "/Inventory.dat";
-        FileStream file;
-        Inventory i = new Inventory();
-        //try and get save game file 
-        if (File.Exists(filePath)) file = File.OpenRead(filePath);
-        else
-        {
-            //if the file does not exsist create new local data class and save it;
-            Debug.Log("Inventory Save not found, making one.");
-
-            ResetFile(filePath);
-
-            //exit load
-            return i;
-        }
-        try
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            i = (Inventory)bf.Deserialize(file);
-            i.PrintInventory();
-            file.Close();
-            
-        }
-        catch(Exception ex)
-        {
-            file.Close();
-            Debug.Log("Failed to read exsisting load file. Creating a new one" +ex );
-            i = new Inventory();
-            ResetFile(filePath);
-        }
-        return i;
-    }
-
     public static void SaveWeapon(Texture2D texture, string name, WeaponData wd)
     {
         //Save the weapons image
         CreateFiles();
         string filePath = Application.persistentDataPath + PlayerMadeDir + weaponsDir + name;
-        if (File.Exists(filePath + ".png")) File.Delete(filePath+".png"); ;
+        if (File.Exists(filePath + ".png")) File.Delete(filePath + ".png"); ;
 
         byte[] bytes = texture.EncodeToPNG();
         File.WriteAllBytes(filePath + ".png", bytes);
@@ -78,8 +27,8 @@ public  class SaveLoadClass
         //Save The weapons data
         FileStream file;
         //try and get the save game file
-        if (File.Exists(filePath)) file = File.OpenWrite(filePath+".dat");
-        else file = ResetFile(filePath+".dat");
+        if (File.Exists(filePath)) file = File.OpenWrite(filePath + ".dat");
+        else file = ResetFile(filePath + ".dat");
 
 
         //serialise and save our data
@@ -102,7 +51,7 @@ public  class SaveLoadClass
             {
                 Sprite s = Sprite.Create(Tex2D, new Rect(0, 0, Tex2D.width, Tex2D.height), new Vector2(0.5f, 0.5f));
                 string id = fi.Name.Remove(fi.Name.Length - 4);
-                AssetManager.Instance.AddSpriteData( new SpriteData(id, s));
+                AssetManager.Instance.AddSpriteData(new SpriteData(id, s));
             }
         }
     }
@@ -146,7 +95,7 @@ public  class SaveLoadClass
             try
             {
                 BinaryFormatter bf = new BinaryFormatter();
-                WeaponData wd  = (WeaponData)bf.Deserialize(fi.OpenRead());
+                WeaponData wd = (WeaponData)bf.Deserialize(fi.OpenRead());
                 fi.OpenRead().Close();
                 LootFactory.Instance.AddWeaponsToLoot(wd);
             }
@@ -156,6 +105,52 @@ public  class SaveLoadClass
                 Debug.Log("Failed to read exsisting weapon data" + ex);
             }
         }
+    }
+
+    public static void Save<T>(T arg, string SavePath, bool needsDefaultPath = false)
+    {
+        string path= "";
+        if (needsDefaultPath) path += Application.persistentDataPath + SavePath;
+        else path = SavePath;
+
+        FileStream file;
+        if (File.Exists(path)) file = File.OpenWrite(path);
+        else file = File.Create(path);
+
+
+        //serialise and save our data
+        BinaryFormatter bf = new BinaryFormatter();
+        bf.Serialize(file, arg);
+        file.Close();
+    }
+
+    public static void Load<T>(T arg, string SavePath, bool needsDefaultPath = false) where T :ISave
+    {
+        string path = "";
+        if (needsDefaultPath) path += Application.persistentDataPath + SavePath;
+        else path = SavePath;
+        FileStream file = null;
+        try
+        {
+            if (File.Exists(path)) file = File.OpenRead(path);
+            else
+            {
+                arg.LoadFailed();
+                return;
+            }
+            BinaryFormatter bf = new BinaryFormatter();
+            T wrs = (T)bf.Deserialize(file);
+            file.Close();
+            arg.LoadSuccess(wrs);
+            Debug.Log("Loaded file from: " + path);
+        }
+        catch(System.Exception ex)
+        {
+            if (file != null) file.Close();
+            Debug.Log("Failed load path " + path + ex);
+            File.Delete(path);
+        }
+
     }
 
     public static FileStream ResetFile(string destination)
@@ -186,4 +181,9 @@ public  class SaveLoadClass
                 System.IO.Directory.CreateDirectory(path + PlayerMadeDir + weaponsDir);
         }
     }
+}
+public interface ISave
+{
+    void LoadSuccess(object obj);
+    void LoadFailed();
 }

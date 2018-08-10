@@ -23,3 +23,16 @@ public class MonsterCreator : MonoBehaviour
 
     }
 }
+
+public class MonsterTextureProfile : ISave
+{
+    public void LoadFailed()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void LoadSuccess(object obj)
+    {
+        throw new System.NotImplementedException();
+    }
+}
