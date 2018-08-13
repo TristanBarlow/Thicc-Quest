@@ -6,7 +6,7 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { set; get; }
 
-    public Inventory inventory = new Inventory();
+    private Inventory inventory = new Inventory();
 
     public GameObject weaponSlot;
     public WeaponData activeWeapon;
@@ -19,9 +19,13 @@ public class InventoryManager : MonoBehaviour
 	}
 
 
+    public List<ItemData> GetNextItemList(int num, ItemType type, bool goBack = false)
+    {
+        return inventory.GetItemDataOfType(num, type, goBack);
+    }
+
     public void AddItem(ItemData i)
     {
-        if (i.type == ItemType.weapon) ChangeWeapon((WeaponData)i);
         inventory.AddItem(i);
         SaveLoadClass.Save(inventory, "/Inventory.dat", true);
     }
@@ -29,7 +33,6 @@ public class InventoryManager : MonoBehaviour
     public void ChangeWeapon(WeaponData w)
     {
         activeWeapon = w;
-        Debug.Log("ItemCnaged");
         weaponSlot.GetComponent<SpriteRenderer>().sprite = w.sprite;
     }
 }

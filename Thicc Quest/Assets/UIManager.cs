@@ -34,12 +34,21 @@ public class UIManager : MonoBehaviour
         UIPreset ui = GetUI(id);
         if (ui == null)
         {
-            Debug.Log("Tried to change menu, Menu not found");
+            Debug.Log("Tried to change to: " + id + ", Menu not found");
             return false;
         }
 
-        if (activeCanvas != null) activeCanvas.canvas.SetActive(false);
+        if (activeCanvas != null)
+        {
+            if (activeCanvas.id == id)
+            {
+                ResetCanvas();
+                return false;
+            }
+            activeCanvas.canvas.SetActive(false);
+        }
 
+        CharacterController_2D.Instance.SwitchControls(ui.controlScheme);
         ui.canvas.SetActive(true);
         activeCanvas = ui;
         return true;
@@ -62,4 +71,5 @@ public class UIPreset
 {
     public string id;
     public GameObject canvas;
+    public ControlScheme controlScheme;
 }

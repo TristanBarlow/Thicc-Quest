@@ -9,6 +9,8 @@ public class Inventory:ISave
 
     private List<ItemData> items = new List<ItemData>();
 
+    int wIter= 0, iIter= 0, aIter = 0, nIter = 0;
+
     public void AddItem(ItemData i)
     {
         switch(i.type)
@@ -40,82 +42,101 @@ public class Inventory:ISave
         }
     }
 
-    //------------------- Weapon stuff---------\\
-    private List<WeaponData> weapons = new List<WeaponData>();
-    private int wIter = 0;
-
-    private bool IsWOk()
+    public List<ItemData> GetAllItemsOfType(ItemType type)
     {
-        if (weapons.Count < 1) return false;
-        if (wIter > weapons.Count) wIter = 0;
-        return true;
-    }
-    public List<WeaponData> GetWeapons() { return weapons; }
-    public WeaponData GetNextWeapon()
-    {
-        if(IsWOk())
+        List<ItemData> list = new List<ItemData>();
+        foreach (ItemData id in items)
         {
-            wIter++;
-            return weapons[wIter - 1];
+            if (id.type == type || type == ItemType.all) list.Add(id);
         }
-        return null;
+        return list;
     }
 
-
-    //----------------- Armour stuff---------------------\\
-    private List<ArmourData> armour = new List<ArmourData>();
-    private int aIter = 0;
-
-    private bool IsAOk()
+    public List<ItemData> GetItemDataOfType(int number, ItemType type, bool lastSet = false)
     {
-        if (armour.Count < 1) return false;
-        if (aIter > armour.Count) aIter = 0;
-        return true;
-    }
+        List<ItemData> its = new List<ItemData>();
+        List<ItemData> AllOfType = GetAllItemsOfType(type);
+        int cIter = GetCurrentIter(type);
 
-    public List<ArmourData> GetAllList() { return armour; }
+        int numPages = (int)(AllOfType.Count / number);
+        int remainder = AllOfType.Count % number;
 
-    public ArmourData GetNextArmour()
-    {
-        if (IsAOk())
+        Debug.Log("Pages: " + numPages);
+        Debug.Log("remainder: " + remainder);
+        int startIter = 0;
+
+        if (lastSet) cIter--;
+        else cIter++;
+
+        if (cIter > numPages)
         {
-            aIter++;
-            return armour[aIter - 1];
+            cIter = 0;
+            startIter = 0;
         }
-        Debug.Log("Armor List not working");
-        return null;
-    }
-
-    public ArmourData GetArmour(string id)
-    {
-        foreach (ArmourData a in armour)
+        else if (cIter < 0)
         {
-            if (a.uID == id) return a;
+            startIter = AllOfType.Count - remainder;
+            cIter = numPages;
         }
-        return null;
-    }
-
-    public ArmourData GetArmourByName(string name)
-    {
-        foreach (ArmourData a in armour)
+        else
         {
-            if (a.name == name) return a;
+            startIter = cIter * number;
         }
-        return null;
+
+        Debug.Log(cIter);
+
+        while (startIter < AllOfType.Count  &&  its.Count< number)
+        {
+            its.Add(AllOfType[startIter]);
+            startIter++;
+        }
+        SetCurrentIter(cIter, type);
+        return its;
     }
 
     public void LoadSuccess(object obj)
     {
         Inventory i = (Inventory)obj;
         items = i.items;
-        weapons = i.weapons;
-        armour = i.armour;
-        PrintInventory();
     }
 
     public void LoadFailed()
     {
         Debug.Log("Failed Inventory load");
         items = new List<ItemData>();
+    }
+
+    public void SetCurrentIter(int newVal, ItemType iterType)
+    {
+        switch (iterType)
+        {
+            case ItemType.armour:
+                aIter = newVal;
+                break;
+            case ItemType.weapon:
+                wIter = newVal;
+                break;
+            case ItemType.item:
+                iIter = newVal;
+                break;
+            case ItemType.all:
+                nIter = newVal;
+                break;
+        }
+    }
+    public int GetCurrentIter(ItemType iterType)
+    {
+        switch (iterType)
+        {
+            case ItemType.armour:
+                return aIter;
+            case ItemType.weapon:
+                return wIter;
+            case ItemType.item:
+                return iIter;
+            case ItemType.all:
+                return nIter;
+        }
+        return 0;
     }
 }

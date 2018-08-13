@@ -63,6 +63,8 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
             Vector2 loc = GetLocationOnSprite();
             int x = (int)loc.x;
             int y = (int)loc.y;
+
+
             if (!IsBrushOverflow(x, y, b_width, b_height))
             {
                 switch (brush)
@@ -106,7 +108,8 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         LootFactory.Instance.AddWeaponsToLoot(wd);
 
         MessageManager.Instance.NewMessage("You have made a weapon... Good for you.");
-        gameObject.SetActive(false);
+
+        UIManager.Instance.ResetCanvas();
         //To Do: Generate weapon stuffs.
     }
 

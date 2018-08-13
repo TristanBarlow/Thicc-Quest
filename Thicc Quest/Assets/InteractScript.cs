@@ -18,11 +18,9 @@ public class InteractScript : MonoBehaviour
     {
 		
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+    public void CheckForInteract()
     {
-        if (!UIManager.Instance.ShouldUpdatePlayer()) return;
         if (Input.GetKeyDown(KeyCode.E))
         {
             Interact = true;
@@ -43,8 +41,7 @@ public class InteractScript : MonoBehaviour
         {
             Interact = false;
         }
-		
-	}
+    }
 
     public bool IsInteracting() { return Interact; }
 }

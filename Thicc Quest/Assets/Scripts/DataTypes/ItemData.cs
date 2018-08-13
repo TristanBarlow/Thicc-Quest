@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public enum ItemType
 {
-    item, weapon, armour
+    item, weapon, armour, all
 }
 
 [System.Serializable]
@@ -18,6 +18,21 @@ public class ItemData
     public string spriteID = "";
     public int Quantity = 0;
     [NonSerialized]
-    public Sprite sprite;
+    private Sprite spr;
+    public Sprite sprite
+    {
+        set
+        {
+            spr = value;
+        }
+        get
+        {
+            if (spr == null)
+            {
+               spr =  AssetManager.Instance.GetSpriteFromId(spriteID);
+            }
+            return spr;
+        }
+    }
 }
 

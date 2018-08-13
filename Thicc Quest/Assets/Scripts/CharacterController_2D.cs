@@ -2,9 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public enum ControlScheme
+{
+    map,
+    inventory,
+    weaponMaker,
+    none
+}
+
 public class CharacterController_2D : MonoBehaviour
 {
-    
+ 
+    public static CharacterController_2D Instance { set; get; }
     Rigidbody2D m_rigidbody;
     Animator m_Animator;
     Transform m_tran;
@@ -22,9 +32,23 @@ public class CharacterController_2D : MonoBehaviour
 
     public GameObject weaponSlot;
 
+    public InteractScript interact;
+
+    private ControlScheme controls = ControlScheme.map;
+
     public bool Once_Attack = false;
 
     public bool IsAttacking = false;
+
+    public int sortingOrder = 0;
+    public int sortingOrderOrigine = 0;
+
+    private float Update_Tic = 0;
+    private float Update_Time = 0.1f;
+
+    // character Filp 
+    bool B_Attack = false;
+    bool B_FacingRight = true;
 
     // Use this for initialization
     void Start () {
@@ -33,7 +57,7 @@ public class CharacterController_2D : MonoBehaviour
         m_tran = this.transform;
         m_SpriteGroup = this.transform.Find("BURLY-MAN_1_swordsman_model").GetComponentsInChildren<SpriteRenderer>(true);
 
-  
+        Instance = this;
     }
 
     public List<Vector2> GetNodePos()
@@ -51,14 +75,16 @@ public class CharacterController_2D : MonoBehaviour
         weaponSlot.GetComponent<SpriteRenderer>().sprite = s;
     }
 
-    private void ReadControls()
+    public void SwitchControls(ControlScheme nType) { controls = nType; }
+    public ControlScheme GetControls() { return controls;}
+
+    private void AttackControls()
     {
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Once_Attack = false;
             m_Animator.SetTrigger("Attack");
-            Debug.Log("aa");
 
            // m_rigidbody.velocity = new Vector3(0, 0, 0);
 
@@ -71,40 +97,59 @@ public class CharacterController_2D : MonoBehaviour
             Debug.Log("Rclick");
             m_Animator.SetTrigger("Attack2");
 
-           // m_rigidbody.velocity = new Vector3(0, 0, 0);
+            IsAttacking = true;
 
-
-
+            // m_rigidbody.velocity = new Vector3(0, 0, 0);
         }
 
-        Move_Fuc();
+    }
+
+    private void CheckForInventoryActions()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            InventoryUIHandler.Instance.RefreshSlots(true);
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            InventoryUIHandler.Instance.RefreshSlots();
+        }
     }
 
     // Update is called once per frame
     void Update ()
     {
+        
         spriteOrder_Controller();
 
-        if (UIManager.Instance.ShouldUpdatePlayer()) ReadControls();
+        switch (controls)
+        {
+            case ControlScheme.inventory:
+                CheckForInventoryActions();
+                break;
+            case ControlScheme.map:
+                AttackControls();
+                interact.CheckForInteract();
+                Move_Fuc();
+                break;
+            case ControlScheme.weaponMaker:
+                break;
+            case ControlScheme.none:
+                break;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             MessageManager.Instance.Dismiss();
         }
-
-
-        h = Input.GetAxis("Horizontal");
-        v = Input.GetAxis("Vertical");
-       
-       m_Animator.SetFloat("MoveSpeed", Mathf.Abs(h )+Mathf.Abs (v));
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            UIManager.Instance.ChangeCanvas("inventory");
+        }
 
     }
 
-    public int sortingOrder = 0;
-    public int sortingOrderOrigine = 0;
 
-    private float Update_Tic = 0;
-    private float Update_Time = 0.1f;
 
     void spriteOrder_Controller()
     {
@@ -163,12 +208,14 @@ public class CharacterController_2D : MonoBehaviour
           
             
         }
+
+
+        h = Input.GetAxis("Horizontal");
+        v = Input.GetAxis("Vertical");
+
+        m_Animator.SetFloat("MoveSpeed", Mathf.Abs(h) + Mathf.Abs(v));
     }
 
-
-    // character Filp 
-    bool B_Attack = false;
-    bool B_FacingRight = true;
 
     void Filp()
     {

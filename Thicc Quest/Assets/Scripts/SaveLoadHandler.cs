@@ -147,8 +147,8 @@ public class SaveLoadClass
         catch(System.Exception ex)
         {
             if (file != null) file.Close();
+            arg.LoadFailed();
             Debug.Log("Failed load path " + path + ex);
-            File.Delete(path);
         }
 
     }
