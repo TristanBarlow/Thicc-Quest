@@ -39,7 +39,7 @@ public class MonsterCreator : MonoBehaviour
     {
         currentProfile.StartNewScan(baseSprite.texture, trainSpeed);
         currentProfile.ApplyWeightedTexture(targetImage, Exploration);
-        if(ShouldLoadSave)SaveLoadClass.Save(currentProfile, currentProfile.SavePath, false);
+        if(ShouldLoadSave)SaveLoadHanlder.Save(currentProfile, currentProfile.SavePath, false);
     }
 }
 
@@ -62,7 +62,7 @@ public class DetailedTextureProfile : ISave
         height = h;
         SavePath = savePath + "/" + label + ".dat";
 
-        if (shouldLoad) SaveLoadClass.Load(this, SavePath, false);
+        if (shouldLoad) SaveLoadHanlder.Load(this, SavePath, false);
         else LoadFailed();
     }
 

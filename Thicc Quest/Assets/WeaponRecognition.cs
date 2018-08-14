@@ -173,12 +173,12 @@ public class TextureProfile:ISave
 
     public void Save()
     {
-        SaveLoadClass.Save(this, SavePath);
+        SaveLoadHanlder.Save(this, SavePath);
     }
 
     public void TryLoad()
     {
-        SaveLoadClass.Load(this, SavePath);
+        SaveLoadHanlder.Load(this, SavePath);
     }
     public void LoadSuccess(object obj)
     {

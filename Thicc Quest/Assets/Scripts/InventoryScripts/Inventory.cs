@@ -94,6 +94,17 @@ public class Inventory:ISave
         return its;
     }
 
+    public bool RemoveItem(ItemData i)
+    {
+        if (items.Contains(i))
+        {
+            items.Remove(i);
+            
+            return true;
+        }
+        else return false;
+    }
+
     public void LoadSuccess(object obj)
     {
         Inventory i = (Inventory)obj;

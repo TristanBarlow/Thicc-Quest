@@ -5,19 +5,26 @@ using UnityEngine;
 [System.Serializable]
 public class WeaponData : ItemData
 {
-    public float dmg = 0.0f;
-    AffinityData affinity = new AffinityData();
+    public BaseStat damage = new BaseStat("Damage", 0);
+    public BaseStat speed = new BaseStat("Speed", 0);
+
+    public AffinityData affinities = new AffinityData();
 
     public WeaponData()
     { type = ItemType.weapon; }
 
-    public WeaponData(string n, Sprite s, string sID, float d, AffinityData aff)
+    public WeaponData(string n, Sprite s, string sID, int d, AffinityData aff)
     {
         name = n;
         sprite = s;
         spriteID = sID;
-        dmg = d;
-        affinity = aff;
+        damage.value = d;
+
+        affinities = aff;
         type = ItemType.weapon;
+    }
+    public override float Evaluate()
+    {
+        return (damage.value + speed.value + quality.value + affinities.AffinityEvaluation()) / 4;
     }
 }

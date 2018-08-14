@@ -15,9 +15,13 @@ public class InventoryManager : MonoBehaviour
 	void Start ()
     {
         Instance = this;
-        SaveLoadClass.Load(inventory, "/Inventory.dat", true);
+        Load();
 	}
 
+    public void Load()
+    {
+        SaveLoadHanlder.Load(inventory, "/Inventory.dat", true);
+    }
 
     public List<ItemData> GetNextItemList(int num, ItemType type, bool goBack = false)
     {
@@ -27,12 +31,24 @@ public class InventoryManager : MonoBehaviour
     public void AddItem(ItemData i)
     {
         inventory.AddItem(i);
-        SaveLoadClass.Save(inventory, "/Inventory.dat", true);
+        SaveLoadHanlder.Save(inventory, "/Inventory.dat", true);
     }
 
-    public void ChangeWeapon(WeaponData w)
+    public bool DiscardItem(ItemData id)
     {
-        activeWeapon = w;
-        weaponSlot.GetComponent<SpriteRenderer>().sprite = w.sprite;
+        bool b =  inventory.RemoveItem(id);
+        SaveLoadHanlder.Save(inventory, "/Inventory.dat", true);
+        return b;
+    }
+
+    public bool ChangeWeapon(ItemData w)
+    {
+        if (w.type == ItemType.weapon)
+        {
+            activeWeapon = (WeaponData)w;
+            weaponSlot.GetComponent<SpriteRenderer>().sprite = w.sprite;
+            return true;
+        }
+        return false;
     }
 }

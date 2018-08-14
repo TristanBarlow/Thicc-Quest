@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
-public class SaveLoadClass
+public class SaveLoadHanlder
 {
 
     public const string PlayerMadeDir = "/PlayerMadeDir";
@@ -37,6 +37,16 @@ public class SaveLoadClass
         file.Close();
     }
 
+    public static void DeleteWeapon(string name)
+    {
+        //Save the weapons image
+        string filePath = Application.persistentDataPath + PlayerMadeDir + weaponsDir + name;
+        if (File.Exists(filePath + ".png")) File.Delete(filePath + ".png");
+
+        //try and get the save game file
+        if (File.Exists(filePath))File.Delete(filePath + ".dat");
+    }
+
     public static void LoadWeaponImages()
     {
         string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir;
@@ -51,7 +61,7 @@ public class SaveLoadClass
             {
                 Sprite s = Sprite.Create(Tex2D, new Rect(0, 0, Tex2D.width, Tex2D.height), new Vector2(0.5f, 0.5f));
                 string id = fi.Name.Remove(fi.Name.Length - 4);
-                AssetManager.Instance.AddSpriteData(new SpriteData(id, s));
+                WeaponManager.Instance.AddSpriteData(new SpriteData(id, s));
             }
         }
     }
@@ -65,7 +75,7 @@ public class SaveLoadClass
         if (Tex2D.LoadImage(FileData))
         {
             Sprite s = Sprite.Create(Tex2D, new Rect(0, 0, Tex2D.width, Tex2D.height), new Vector2(0.5f, 0.5f));
-            AssetManager.Instance.AddSpriteData(new SpriteData(name, s));
+            WeaponManager.Instance.AddSpriteData(new SpriteData(name, s));
         }
     }
 
@@ -89,22 +99,35 @@ public class SaveLoadClass
     {
         string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir;
         FileInfo[] files = TryGetFiles(dirPath, "*.dat");
+        List<string> filesToGo = new List<string>();
         if (files == null) return;
+        FileStream fs = null;
         foreach (FileInfo fi in files)
         {
             try
             {
+                fs = fi.OpenRead();
                 BinaryFormatter bf = new BinaryFormatter();
-                WeaponData wd = (WeaponData)bf.Deserialize(fi.OpenRead());
-                fi.OpenRead().Close();
-                LootFactory.Instance.AddWeaponsToLoot(wd);
+                WeaponData wd = (WeaponData)bf.Deserialize(fs);
+                fs.Close();
+                WeaponManager.Instance.AddWeapon(wd, WeaponSortType.playerMade);
             }
             catch (Exception ex)
             {
-                fi.OpenRead().Close();
+                if (fs != null)
+                {
+                    fs.Close();
+                }
                 Debug.Log("Failed to read exsisting weapon data" + ex);
+                Debug.Log("Deleting file : " + fi.Directory +"/" +fi.Name);
+                filesToGo.Add(fi.Name);
             }
         }
+        foreach (string n in filesToGo)
+        {
+            File.Delete(dirPath + n);
+        }
+
     }
 
     public static void Save<T>(T arg, string SavePath, bool needsDefaultPath = false)

@@ -10,7 +10,17 @@ using System.Runtime.Serialization;
 [System.Serializable]
 public enum AffType
 {
-    earth, dark, magic, orc, frost, fire, none
+    earth, air,  dark, light, magic, spirtual, frost, fire, none
+}
+
+[System.Serializable]
+public class BaseAffinityData
+{
+    public AffType type;
+    public string title;
+    public List<AffType> Weak;
+    public List<AffType> Strong;
+    public UnityEngine.Color col;
 }
 
 [System.Serializable]
@@ -21,9 +31,11 @@ public class AffinityData
     public AffinityData()
     {
         affinities.Add(new Affinity(AffType.earth, 0.0f));
+        affinities.Add(new Affinity(AffType.air, 0.0f));
         affinities.Add(new Affinity(AffType.dark, 0.0f));
+        affinities.Add(new Affinity(AffType.light, 0.0f));
         affinities.Add(new Affinity(AffType.magic, 0.0f));
-        affinities.Add(new Affinity(AffType.orc, 0.0f));
+        affinities.Add(new Affinity(AffType.spirtual, 0.0f));
         affinities.Add(new Affinity(AffType.frost, 0.0f));
         affinities.Add(new Affinity(AffType.fire, 0.0f));
     }
@@ -40,7 +52,17 @@ public class AffinityData
         }
         return new Affinity(AffType.none, 0);
     }
+    public List<Affinity> GetAffinities() { return affinities; }
 
+    public float AffinityEvaluation()
+    {
+        float total = 0;
+        foreach (Affinity a in affinities)
+        {
+            total += a.value;
+        }
+        return total / affinities.Count;
+    }
 }
 
 [System.Serializable]

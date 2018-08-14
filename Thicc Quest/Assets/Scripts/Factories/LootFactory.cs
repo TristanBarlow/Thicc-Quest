@@ -12,8 +12,6 @@ public class LootFactory : MonoBehaviour
 
     public int MaxNumberOfLoot = 30;
 
-    public List<WeaponData> weapons;
-
     public GameObject lootPrefab;
 
     private void Start()
@@ -27,7 +25,7 @@ public class LootFactory : MonoBehaviour
             l_Pool.Add(ls);
         }
 
-        SaveLoadClass.LoadWeaponData();
+        SaveLoadHanlder.LoadWeaponData();
     }
 
     public void SpawnLoot(Vector2 pos)
@@ -38,7 +36,7 @@ public class LootFactory : MonoBehaviour
             l_Pool.Remove(ls);
             l_Active.Add(ls);
             ItemData i = GetRandomWeaponData();
-            i.sprite = AssetManager.Instance.GetSpriteFromId(i.spriteID);
+            i.sprite = WeaponManager.Instance.GetSpriteFromId(i.spriteID);
             ls.Show(pos, i, this );
         }
     }
@@ -50,14 +48,14 @@ public class LootFactory : MonoBehaviour
             LootScript ls = l_Pool[0];
             l_Pool.Remove(ls);
             l_Active.Add(ls);
-            i.sprite = AssetManager.Instance.GetSpriteFromId(i.spriteID);
+            i.sprite = WeaponManager.Instance.GetSpriteFromId(i.spriteID);
             ls.Show(pos, i, this);
         }
     }
 
     private WeaponData GetRandomWeaponData()
     {
-        return weapons[Random.Range(0, weapons.Count)];
+        return WeaponManager.Instance.GetRandomWeapon();
     }
 
     public void DespawnLoot(LootScript ls)
@@ -76,10 +74,7 @@ public class LootFactory : MonoBehaviour
         InventoryManager.Instance.AddItem(i);
     }
 
-    public void AddWeaponsToLoot(WeaponData wd)
-    {
-        weapons.Add(wd);
-    }
+
 }
 [System.Serializable]
 public class SpriteData

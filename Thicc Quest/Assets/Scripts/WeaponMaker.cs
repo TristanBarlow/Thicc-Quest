@@ -99,13 +99,13 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
             MessageManager.Instance.NewMessage("Come on, you need a longer name that that...");
             return;
         }
-        WeaponData wd = new WeaponData(nameField.text, image.sprite, nameField.text, 0.1f, new AffinityData() );
+        WeaponData wd = new WeaponData(nameField.text, image.sprite, nameField.text, 1, new AffinityData() );
 
-        SaveLoadClass.SaveWeapon(image.sprite.texture, nameField.text, wd);
+        SaveLoadHanlder.SaveWeapon(image.sprite.texture, nameField.text, wd);
 
-        SaveLoadClass.LoadSprite(nameField.text);
+        SaveLoadHanlder.LoadSprite(nameField.text);
 
-        LootFactory.Instance.AddWeaponsToLoot(wd);
+        WeaponManager.Instance.AddWeapon(wd, WeaponSortType.playerMade);
 
         MessageManager.Instance.NewMessage("You have made a weapon... Good for you.");
 

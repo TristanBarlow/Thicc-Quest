@@ -10,6 +10,14 @@ public enum ItemType
 }
 
 [System.Serializable]
+public class BaseStat
+{
+    public string title = "none";
+    public int value = 0;
+    public BaseStat(string s, int v) { title = s; value = v; }
+}
+
+[System.Serializable]
 public class ItemData
 {
     public ItemType  type = ItemType.item;
@@ -17,6 +25,8 @@ public class ItemData
     public string uID = "";
     public string spriteID = "";
     public int Quantity = 0;
+    public BaseStat weight = new BaseStat("Weight", 0);
+    public BaseStat quality = new BaseStat("Quality", 0);
     [NonSerialized]
     private Sprite spr;
     public Sprite sprite
@@ -29,10 +39,14 @@ public class ItemData
         {
             if (spr == null)
             {
-               spr =  AssetManager.Instance.GetSpriteFromId(spriteID);
+               spr =  WeaponManager.Instance.GetSpriteFromId(spriteID);
             }
             return spr;
         }
+    }
+    public virtual float Evaluate()
+    {
+        return quality.value;
     }
 }
 
