@@ -52,6 +52,7 @@ public class InventoryUIHandler : MonoBehaviour
             i++;
         }
         ActiveItem = slots[0].GetData();
+        CheckHasItems();
     }
 
     public void ToggleFilter(string newType)
@@ -72,12 +73,12 @@ public class InventoryUIHandler : MonoBehaviour
                 break;
         }
         RefreshSlots();
+
     }
 
     public void OnEnable()
     {
         RefreshSlots();
-        Debug.Log("hi");
     }
 
     public void RefreshNameDescrText()
@@ -91,8 +92,17 @@ public class InventoryUIHandler : MonoBehaviour
         else
         {
             itemNameText.text = ActiveItem.name;
-            itemDescriptionText.text = ActiveItem.name + " is a " + ActiveItem.type.ToString() + " nice.";
+            itemDescriptionText.text = ActiveItem.name + " is a " + ActiveItem.type.ToString() + ", nice.";
             itemDisplayImage.sprite = ActiveItem.sprite;
+        }
+    }
+
+    public void CheckHasItems()
+    {
+        if (slots[0].GetData() == null)
+        {
+            MessageManager.Instance.NewMessage("You have no " + currentFilter.ToString() +"s, try getting some.");
+            HideStats();
         }
     }
 
@@ -196,6 +206,7 @@ public class InventoryUIHandler : MonoBehaviour
             case ActionType.Discard:
                 MessageManager.Instance.NewMessage("You have discarded your " + activeItem.name );
                 RefreshSlots();
+                
                 break;
             case ActionType.Equip:
                 ToggleMore();
@@ -220,26 +231,34 @@ public class InventoryUIHandler : MonoBehaviour
         }
     }
 
+    public void HideStats()
+    {
+        statsLayer.SetActive(false);
+        IsShowing = false;
+        MoreButton.text = "More";
+    }
+    public void ShowStats()
+    {
+        if (ActiveItem == null)
+        {
+            ActiveItem = slots[0].GetData();
+            RefreshNameDescrText();
+        }
+        IsShowing = true;
+        statsLayer.SetActive(true);
+        MoreButton.text = "Less";
+        RefreshStats();
+    }
     public void ToggleMore()
     {
         if (!HasItems()) return;
         if (IsShowing)
         {
-            statsLayer.SetActive(false);
-            IsShowing = false;
-            MoreButton.text = "More";
+            HideStats();
         }
         else
         {
-            if (ActiveItem == null)
-            {
-                ActiveItem = slots[0].GetData();
-                RefreshNameDescrText();
-            }
-            IsShowing = true;
-            statsLayer.SetActive(true);
-            MoreButton.text = "Less";
-            RefreshStats();
+            ShowStats();
         }
 
     }

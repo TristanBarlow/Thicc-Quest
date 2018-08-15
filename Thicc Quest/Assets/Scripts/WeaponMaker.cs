@@ -27,7 +27,26 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     private Sprite spr;
     private Rect bound;
 
-    private OreParent currentOre = new OreParent(OreType.Steel, 0, Color.gray);
+    private EssenceItem cEssence;
+    public EssenceItem currentEssence
+    {
+        set
+        {
+            cEssence = value;
+            UpdateEssence();
+        }
+        get
+        {
+            if (cEssence == null && AssetManager.Instance != null)
+            {
+                cEssence = AssetManager.Instance.GetEssenceOfType(AffType.dark);
+                UpdateEssence();
+            }
+            return cEssence;
+        }
+    }
+
+    public Text numberOfEssence;
 
     public float AlphaCorrection = 0.3f;
 
@@ -52,7 +71,11 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     private void OnEnable()
     {
         ResetSprite();
-        WeaponRecognition.Instance.LoadWeapon(image.sprite, "1h");
+        if (WeaponRecognition.Instance != null)
+        {
+            WeaponRecognition.Instance.LoadWeapon(image.sprite, "1h");
+        }
+        UpdateEssence();
     }
 
     // Update is called once per frame
@@ -87,12 +110,16 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
                 }
             }
             image.sprite.texture.Apply();
-            currentOre.col.a = 1;
             loc = oldPos;
         }
 	}
 
     public void SaveImage()
+    {
+        MessageManager.Instance.NewQuestion(Save, null, "Are you sure you have finished?");
+    }
+
+    public void Save()
     {
         if (nameField.text.Length <= 2)
         {
@@ -193,14 +220,19 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         Color c = baseSprite.texture.GetPixel(x, y);
         if (c.a < AlphaCorrection)
         {
-            currentOre.col.a = 0.9f;
-            image.sprite.texture.SetPixel(x, y , currentOre.col);
+            image.sprite.texture.SetPixel(x, y , currentEssence.EditCol(3, 1));
         }
         else
         {
 
-            image.sprite.texture.SetPixel(x , y ,c*currentOre.col);
+            image.sprite.texture.SetPixel(x , y ,c*currentEssence.color);
         }
+    }
+
+    public void UpdateEssence()
+    {
+        if (numberOfEssence.text == null || currentEssence == null) return; 
+        numberOfEssence.text = currentEssence.quantity.ToString() ;
     }
 
     public void TryQuit()
@@ -224,6 +256,11 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         return (x >= w - xOff || x <= xOff || y >= h - yOff || y <= yOff);
     }
 
+    public void TryReset()
+    {
+        MessageManager.Instance.NewQuestion(ResetSprite, null, "Are you sure you want to reset?");
+    }
+
     public void ResetSprite()
     {
         currentTex = new Texture2D(baseSprite.texture.width, baseSprite.texture.height, TextureFormat.ARGB32, false);
@@ -231,6 +268,7 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         currentTex.Apply();
         spr = Sprite.Create(currentTex, baseSprite.rect, Vector2.zero);
         image.sprite = spr;
+        image.rectTransform.sizeDelta = new Vector2(spr.texture.width, spr.texture.height);
     }
 
     private Vector2 GetLocationOnSprite()
@@ -258,10 +296,12 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     public void SetBrushSize(int size) { b_width = size; b_height = size; b_radius = size; }
     public void SetSquare() { brush = Brush.Square; }
     public void SetCircle() { brush = Brush.Circle; }
-    public void SetOreSteel() { currentOre = AssetManager.Instance.GetOreOfType(OreType.Steel); }
-    public void SetOreDark() { currentOre = AssetManager.Instance.GetOreOfType(OreType.Dark); }
-    public void SetOreMagic() { currentOre = AssetManager.Instance.GetOreOfType(OreType.Magic); }
-    public void SetOreOrc() { currentOre = AssetManager.Instance.GetOreOfType(OreType.Orc); }
-    public void SetOreFrost() { currentOre = AssetManager.Instance.GetOreOfType(OreType.Frost); }
-    public void SetOreFire() { currentOre = AssetManager.Instance.GetOreOfType(OreType.Fire); }
+    public void SetEssenceLight() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.light); }
+    public void SetEssenceDark() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.dark); }
+    public void SetEssenceMagic() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.magic); }
+    public void SetEssenceSpirtual() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.spirtual); }
+    public void SetEssenceFrost() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.frost); }
+    public void SetEssenceFire() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.fire); }
+    public void SetEssenceEarth() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.earth); }
+    public void SetEssenceAir() { currentEssence = AssetManager.Instance.GetEssenceOfType(AffType.air); }
 }

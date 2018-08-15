@@ -74,14 +74,14 @@ public class AssetManager : MonoBehaviour {
         return Chests[Random.Range(0, Chests.Length)];
     }
     ///-------------- Ore stuff ---------\\\\
-    public OreParent[] ores;
-    public OreParent GetOreOfType(OreType ore)
+    public EssenceItem[] Essences;
+    public EssenceItem GetEssenceOfType(AffType type)
     {
-        foreach (OreParent op in ores)
+        foreach (EssenceItem op in Essences)
         {
-            if (op.type == ore) return op;
+            if (op.type == type) return op;
         }
-        return ores[0];
+        return Essences[0];
     }
    
     // Use this for initialization
