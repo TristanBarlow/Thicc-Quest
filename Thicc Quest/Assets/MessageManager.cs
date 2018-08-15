@@ -61,6 +61,11 @@ public class MessageManager : MonoBehaviour
         }
     }
 
+    public  void NewQuestion(Command y, Command n, string message)
+    {
+        AddMessage(new QuestionType(1, message, y, n));
+    }
+
     public void CheckForNext()
     {
         if (messages.Count > 0)
@@ -77,11 +82,27 @@ public class MessageManager : MonoBehaviour
                 activeBoard = GetBoard(mt.id);
                 activeBoard.Apply(mt, speed);
                 break;
+            case 1:
+                QuestionMessage qm = new QuestionMessage(GetBoard(mt.id));
+                qm.Apply(mt, speed);
+                activeBoard = qm;
+                break;
         }
+    }
+
+    public void TryQuestionReponse(bool r)
+    {
+        if (activeBoard.id == 1)
+        {
+            QuestionMessage qm = (QuestionMessage)activeBoard;
+            qm.Response(r);
+        }
+        else { activeBoard.Dismissed = true; }
     }
 
     public void Dismiss()
     {
+
         if (activeBoard != null)
         {
             activeBoard.Dismissed = true;
@@ -89,48 +110,5 @@ public class MessageManager : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class MessageBoard
-{
-    public int id = 0;
-    public GameObject board;
-    public Text t;
-    public float alpha = 0;
 
-    private bool dismiss = false;
-    private float dir = 1;
-
-    public bool Dismissed
-    {
-        set
-        {
-            if (value)
-            {
-                dir *= -1;
-            }
-            dismiss = value;
-        }
-        get
-        {
-            return dismiss;
-        }
-    }
-
-    public void Apply(MessageType mt, float speed)
-    {
-        t.text = mt.message;
-        dir = 1;
-        dismiss = false;
-        dir *= speed;
-        alpha = 0;
-        board.SetActive(true);
-    }
-    public void move(Vector2 srt, Vector2 end)
-    {
-        if (alpha >= 1 && !dismiss) return;
-        alpha += Time.deltaTime * dir;
-        board.transform.position = Vector2.Lerp(srt, end, alpha);
-        if (dismiss && alpha < 0) board.SetActive(false);
-    }
-}
 

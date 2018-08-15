@@ -89,7 +89,6 @@ public class AssetManager : MonoBehaviour {
     {
         Instance = this;
         InitGrassLand();
-        SaveLoadHanlder.LoadWeaponImages();
     }
 	
 	// Update is called once per frame

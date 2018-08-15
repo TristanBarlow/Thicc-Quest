@@ -38,6 +38,7 @@ public class InventoryManager : MonoBehaviour
     {
         bool b =  inventory.RemoveItem(id);
         SaveLoadHanlder.Save(inventory, "/Inventory.dat", true);
+        LootFactory.Instance.SpawnLootAroundPoint(CharacterController_2D.Instance.transform.position, id, 1);
         return b;
     }
 

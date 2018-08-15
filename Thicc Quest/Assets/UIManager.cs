@@ -1,12 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { set; get; }
     private UIPreset activeCanvas;
     public List<UIPreset> canvasDict = new List<UIPreset>();
+
+    public Text FPSCounter;
+    private int tickDelay = 10;
+    private int ticker = 0;
 
     public void Start()
     {
@@ -53,6 +58,16 @@ public class UIManager : MonoBehaviour
         activeCanvas = ui;
         return true;
 
+    }
+
+    private void Update()
+    {
+        ticker++;
+        if (ticker > tickDelay)
+        {
+            FPSCounter.text = Mathf.RoundToInt(1.0f / Time.deltaTime).ToString();
+            ticker = 0;
+        }
     }
 
 

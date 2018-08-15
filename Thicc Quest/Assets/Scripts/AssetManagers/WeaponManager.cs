@@ -23,9 +23,9 @@ class WeaponManager:MonoBehaviour
     private void Start()
     {
         Instance = this;
+        AddToActiveWeapons(baseWeapons);
         LoadData();
         LoadSprites();
-        AddToActiveWeapons(baseWeapons);
     }
 
     public void AddToActiveWeapons(List<WeaponData> wds)
@@ -67,6 +67,7 @@ class WeaponManager:MonoBehaviour
         }
         return null;
     }
+
     public void AddSpriteData(SpriteData sd)
     {
         weaponSprites.Add(sd);
@@ -93,10 +94,10 @@ class WeaponManager:MonoBehaviour
                 activeWeapons.Add(wd);
                 break;
             case WeaponSortType.playerMade:
-                activeWeapons.Add(wd);
+                playerMadeWeapons.Add(wd);
                 break;
             case WeaponSortType.normal:
-                activeWeapons.Add(wd);
+                baseWeapons.Add(wd);
                 break;
                 
         }

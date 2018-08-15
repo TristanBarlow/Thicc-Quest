@@ -28,7 +28,7 @@ public class FactoryManager : MonoBehaviour
     public Dictionary<int, Vector2> ActiveSeeds =  new Dictionary<int, Vector2>();
 
     private float s_size;
-    private float threshold =2.0f;
+    public float threshold =1.5f;
 
 	// Use this for initialization
 	void Start () {

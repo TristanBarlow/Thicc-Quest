@@ -17,3 +17,13 @@ public class MessageType
         message = m;
     }
 }
+public class QuestionType : MessageType
+{
+    public Command y;
+    public Command n;
+    public QuestionType(int i, string m, Command yes, Command no ) : base(i, m)
+    {
+        y = yes;
+        n = no;
+    }
+}

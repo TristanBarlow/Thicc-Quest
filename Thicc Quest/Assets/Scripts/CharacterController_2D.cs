@@ -114,7 +114,23 @@ public class CharacterController_2D : MonoBehaviour
         {
             InventoryUIHandler.Instance.RefreshSlots();
         }
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            UIManager.Instance.ChangeCanvas("inventory");
+        }
     }
+
+    private void CheckForMapActions()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            UIManager.Instance.ChangeCanvas("inventory");
+        }
+        AttackControls();
+        interact.CheckForInteract();
+        Move_Fuc();
+    }
+
 
     // Update is called once per frame
     void Update ()
@@ -128,9 +144,7 @@ public class CharacterController_2D : MonoBehaviour
                 CheckForInventoryActions();
                 break;
             case ControlScheme.map:
-                AttackControls();
-                interact.CheckForInteract();
-                Move_Fuc();
+                CheckForMapActions();
                 break;
             case ControlScheme.weaponMaker:
                 break;
@@ -142,10 +156,7 @@ public class CharacterController_2D : MonoBehaviour
         {
             MessageManager.Instance.Dismiss();
         }
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            UIManager.Instance.ChangeCanvas("inventory");
-        }
+
 
     }
 
@@ -181,7 +192,7 @@ public class CharacterController_2D : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
           //  Debug.Log("Left");
-            m_rigidbody.AddForce(Vector2.left * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.left * MoveSpeed * Time.deltaTime);
             if (B_FacingRight)
                 Filp();
 
@@ -190,7 +201,7 @@ public class CharacterController_2D : MonoBehaviour
         else if (Input.GetKey(KeyCode.D))
         {
           //  Debug.Log("Right");
-            m_rigidbody.AddForce(Vector2.right * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.right * MoveSpeed*Time.deltaTime);
             if (!B_FacingRight)
                 Filp();
         }
@@ -198,13 +209,13 @@ public class CharacterController_2D : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
            // Debug.Log("up");
-            m_rigidbody.AddForce(Vector2.up * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.up * MoveSpeed * Time.deltaTime);
           
         }
         else if (Input.GetKey(KeyCode.S))
         {
            // Debug.Log("Down");
-            m_rigidbody.AddForce(Vector2.down * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.down * MoveSpeed * Time.deltaTime);
           
             
         }

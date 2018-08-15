@@ -151,10 +151,10 @@ public class InventoryUIHandler : MonoBehaviour
 
     private void StatsArmourInit(ArmourData id)
     {
-        baseStats[0].Init(id.resistance.title, id.resistance.value);
-        baseStats[1].Init(id.magicResist.title, id.magicResist.value);
-        baseStats[2].Init(id.weight.title, id.weight.value);
-        baseStats[3].Init(id.quality.title, id.quality.value);
+        baseStats[0].Init(id.resistance.Title, id.resistance.value);
+        baseStats[1].Init(id.magicResist.Title, id.magicResist.value);
+        baseStats[2].Init(id.weight.Title, id.weight.value);
+        baseStats[3].Init(id.quality.Title, id.quality.value);
         ApplyAffinityData(id.affinities.GetAffinities());
 
         actionButtons[0].Init("Equip", InventoryManager.Instance.ChangeWeapon,ActiveItem, ActionType.Equip);
@@ -164,10 +164,10 @@ public class InventoryUIHandler : MonoBehaviour
     }
     private void StatsWeaponInit(WeaponData id)
     {
-        baseStats[0].Init(id.damage.title, id.damage.value);
-        baseStats[1].Init(id.speed.title, id.speed.value);
-        baseStats[2].Init(id.weight.title, id.weight.value);
-        baseStats[3].Init(id.quality.title, id.quality.value);
+        baseStats[0].Init(id.damage.Title, id.damage.value);
+        baseStats[1].Init(id.speed.Title, id.speed.value);
+        baseStats[2].Init(id.weight.Title, id.weight.value);
+        baseStats[3].Init(id.quality.Title, id.quality.value);
         ApplyAffinityData(id.affinities.GetAffinities());
         actionButtons[0].Init("Equip", InventoryManager.Instance.ChangeWeapon, ActiveItem, ActionType.Equip);
         actionButtons[1].Init("Discard", InventoryManager.Instance.DiscardItem, ActiveItem, ActionType.Discard);
@@ -176,8 +176,8 @@ public class InventoryUIHandler : MonoBehaviour
     }
     private void StatsItemsInit(ItemData id)
     {
-        baseStats[0].Init(id.weight.title, id.weight.value);
-        baseStats[1].Init(id.quality.title, id.quality.value);
+        baseStats[0].Init(id.weight.Title, id.weight.value);
+        baseStats[1].Init(id.quality.Title, id.quality.value);
         baseStats[2].Hide();
         baseStats[3].Hide();
 

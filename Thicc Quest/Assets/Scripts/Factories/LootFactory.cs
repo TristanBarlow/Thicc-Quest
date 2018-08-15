@@ -25,19 +25,14 @@ public class LootFactory : MonoBehaviour
             l_Pool.Add(ls);
         }
 
-        SaveLoadHanlder.LoadWeaponData();
     }
 
     public void SpawnLoot(Vector2 pos)
     {
         if (l_Pool.Count > 0)
         {
-            LootScript ls = l_Pool[0];
-            l_Pool.Remove(ls);
-            l_Active.Add(ls);
             ItemData i = GetRandomWeaponData();
-            i.sprite = WeaponManager.Instance.GetSpriteFromId(i.spriteID);
-            ls.Show(pos, i, this );
+            GetLootPref().Show(pos, i, this );
         }
     }
 
@@ -45,13 +40,27 @@ public class LootFactory : MonoBehaviour
     {
         if (l_Pool.Count > 0)
         {
-            LootScript ls = l_Pool[0];
-            l_Pool.Remove(ls);
-            l_Active.Add(ls);
-            i.sprite = WeaponManager.Instance.GetSpriteFromId(i.spriteID);
-            ls.Show(pos, i, this);
+            GetLootPref().Show(pos, i, this);
         }
     }
+
+    private LootScript GetLootPref()
+    {
+        LootScript ls = l_Pool[0];
+        l_Pool.Remove(ls);
+        l_Active.Add(ls);
+        return ls;
+    }
+
+    public void SpawnLootAroundPoint(Vector2 pos, ItemData id, int dist)
+    {
+        if (l_Pool.Count > 0)
+        {
+            Vector2 dir = new Vector2(Random.Range(-1, 1), Random.Range(-1, 1));
+            GetLootPref().Show(pos + (dir * dist), id, this);
+        }
+    }
+
 
     private WeaponData GetRandomWeaponData()
     {

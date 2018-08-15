@@ -12,9 +12,10 @@ public enum ItemType
 [System.Serializable]
 public class BaseStat
 {
-    public string title = "none";
+    private string title = "none";
+    public string Title { set { title = value; }get { return title; } }
     public int value = 0;
-    public BaseStat(string s, int v) { title = s; value = v; }
+    public BaseStat(string s, int v) { Title = s; value = v; }
 }
 
 [System.Serializable]
@@ -39,7 +40,12 @@ public class ItemData
         {
             if (spr == null)
             {
-               spr =  WeaponManager.Instance.GetSpriteFromId(spriteID);
+                switch (type)
+                {
+                    case ItemType.weapon:
+                        spr = WeaponManager.Instance.GetSpriteFromId(spriteID);
+                        break;
+                }
             }
             return spr;
         }

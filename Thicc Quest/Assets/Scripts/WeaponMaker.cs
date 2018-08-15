@@ -99,7 +99,7 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
             MessageManager.Instance.NewMessage("Come on, you need a longer name that that...");
             return;
         }
-        WeaponData wd = new WeaponData(nameField.text, image.sprite, nameField.text, 1, new AffinityData() );
+        WeaponData wd = new WeaponData(nameField.text, null, nameField.text, 1, new AffinityData() );
 
         SaveLoadHanlder.SaveWeapon(image.sprite.texture, nameField.text, wd);
 
@@ -203,6 +203,20 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         }
     }
 
+    public void TryQuit()
+    {
+        MessageManager.Instance.NewQuestion(Quit, null, "Are you sure you want to Exit?");
+    }
+
+    public void Quit()
+    {
+        UIManager.Instance.ResetCanvas();
+        ResetSprite();
+        nameField.text = "";
+        nameField.textComponent.text = "";
+        GUI.SetNextControlName("Quit");
+        GUI.FocusControl("Quit");
+    }
     private bool IsBrushOverflow(int x, int y, int xOff, int yOff)
     {
         int w = image.sprite.texture.width;
