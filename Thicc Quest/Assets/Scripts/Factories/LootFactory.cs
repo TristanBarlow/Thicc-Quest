@@ -64,7 +64,7 @@ public class LootFactory : MonoBehaviour
 
     private WeaponData GetRandomWeaponData()
     {
-        return WeaponManager.Instance.GetRandomWeapon();
+        return ItemManager.Instance.GetRandomWeapon();
     }
 
     public void DespawnLoot(LootScript ls)

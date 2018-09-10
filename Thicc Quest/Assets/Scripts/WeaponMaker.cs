@@ -14,7 +14,32 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         Circle,
         Rings
     }
-    public Sprite baseSprite;
+    public Sprite BaseSprite
+    {
+        get
+        {
+            if (BaseWeapon != null)
+            {
+                return BaseWeapon.sprite;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+    WeaponData _baseWeapon;
+    public WeaponData BaseWeapon
+    {
+        get
+        {
+            if (_baseWeapon == null)
+            {
+                _baseWeapon = ItemManager.Instance.GetRandomWeapon();
+            }
+            return _baseWeapon;
+        }
+    }
 
     GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
@@ -126,17 +151,24 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
             MessageManager.Instance.NewMessage("Come on, you need a longer name that that...");
             return;
         }
-        WeaponData wd = new WeaponData(nameField.text, null, nameField.text, 1, new AffinityData() );
+
+        AffinityData weapAffinity = PixelScanner.ScanTextureAffinity(image.sprite.texture, AssetManager.Instance.baseAffinities, Variables.Instance.PixelScannerThrehold);
+
+        WeaponData wd = new WeaponData(nameField.text, null, nameField.text,BaseWeapon.damage.value , weapAffinity);
+
+        weapAffinity.PrintMe();
 
         SaveLoadHanlder.SaveWeapon(image.sprite.texture, nameField.text, wd);
 
         SaveLoadHanlder.LoadSprite(nameField.text);
 
-        WeaponManager.Instance.AddWeapon(wd, WeaponSortType.playerMade);
+        ItemManager.Instance.AddWeapon(wd, WeaponSortType.playerMade);
 
         MessageManager.Instance.NewMessage("You have made a weapon... Good for you.");
 
         UIManager.Instance.ResetCanvas();
+
+        InventoryManager.Instance.AddItem(wd);
         //To Do: Generate weapon stuffs.
     }
 
@@ -217,7 +249,7 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     private void DrawPixel(int x, int y)
     {
 
-        Color c = baseSprite.texture.GetPixel(x, y);
+        Color c = BaseSprite.texture.GetPixel(x, y);
         if (c.a < AlphaCorrection)
         {
             image.sprite.texture.SetPixel(x, y , currentEssence.EditCol(3, 1));
@@ -263,10 +295,10 @@ public class WeaponMaker : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
 
     public void ResetSprite()
     {
-        currentTex = new Texture2D(baseSprite.texture.width, baseSprite.texture.height, TextureFormat.ARGB32, false);
-        currentTex.SetPixels32(baseSprite.texture.GetPixels32());
+        currentTex = new Texture2D(BaseSprite.texture.width, BaseSprite.texture.height, TextureFormat.ARGB32, false);
+        currentTex.SetPixels32(BaseSprite.texture.GetPixels32());
         currentTex.Apply();
-        spr = Sprite.Create(currentTex, baseSprite.rect, Vector2.zero);
+        spr = Sprite.Create(currentTex, BaseSprite.rect, Vector2.zero);
         image.sprite = spr;
         image.rectTransform.sizeDelta = new Vector2(spr.texture.width, spr.texture.height);
     }

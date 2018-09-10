@@ -181,7 +181,7 @@ public class InventoryUIHandler : MonoBehaviour
         ApplyAffinityData(id.affinities.GetAffinities());
         actionButtons[0].Init("Equip", InventoryManager.Instance.ChangeWeapon, ActiveItem, ActionType.Equip);
         actionButtons[1].Init("Discard", InventoryManager.Instance.DiscardItem, ActiveItem, ActionType.Discard);
-        actionButtons[2].Hide();
+        actionButtons[2].Init("Destroy All", InventoryManager.Instance.DestroyAllOfItem, ActiveItem, ActionType.Discard);
         actionButtons[3].Hide();
     }
     private void StatsItemsInit(ItemData id)

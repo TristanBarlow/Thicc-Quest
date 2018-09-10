@@ -31,6 +31,7 @@ public class Inventory:ISave
                     break;
                 }
         }
+        MessageManager.Instance.NewMessage("The " + i.type + " " + i.name + " has been added to you inventory");
     }
 
     public void PrintInventory()
@@ -60,9 +61,6 @@ public class Inventory:ISave
 
         int numPages = (int)(AllOfType.Count / number);
         int remainder = AllOfType.Count % number;
-
-        Debug.Log("Pages: " + numPages);
-        Debug.Log("remainder: " + remainder);
         int startIter = 0;
 
         if (lastSet) cIter--;
@@ -83,8 +81,6 @@ public class Inventory:ISave
             startIter = cIter * number;
         }
 
-        Debug.Log(cIter);
-
         while (startIter < AllOfType.Count  &&  its.Count< number)
         {
             its.Add(AllOfType[startIter]);
@@ -103,6 +99,20 @@ public class Inventory:ISave
             return true;
         }
         else return false;
+    }
+
+    public bool RemoveItemByID(string id)
+    {
+        for(int i = 0; i < items.Count; i ++) 
+        {
+            ItemData item = items[i];
+            if (item.name == id)
+            {
+                items.Remove(item);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void LoadSuccess(object obj)

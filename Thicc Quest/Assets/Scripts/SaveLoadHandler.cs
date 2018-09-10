@@ -44,14 +44,17 @@ public class SaveLoadHanlder
         if (File.Exists(filePath + ".png")) File.Delete(filePath + ".png");
 
         //try and get the save game file
-        if (File.Exists(filePath))File.Delete(filePath + ".dat");
+        if (File.Exists(filePath + ".dat"))File.Delete(filePath + ".dat");
     }
 
-    public static void LoadWeaponImages()
+    public static List<SpriteData> LoadWeaponImages()
     {
         string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir;
         FileInfo[] files = TryGetFiles(dirPath, "*.png");
-        if (files == null) return;
+
+        List<SpriteData> sprites = new List<SpriteData>();
+
+        if (files == null) return null;
 
         foreach (FileInfo fi in files)
         {
@@ -61,9 +64,10 @@ public class SaveLoadHanlder
             {
                 Sprite s = Sprite.Create(Tex2D, new Rect(0, 0, Tex2D.width, Tex2D.height), new Vector2(0.5f, 0.5f));
                 string id = fi.Name.Remove(fi.Name.Length - 4);
-                WeaponManager.Instance.AddSpriteData(new SpriteData(id, s));
+                sprites.Add(new SpriteData(id, s));
             }
         }
+        return sprites;
     }
 
     public static void LoadSprite(string name)
@@ -75,7 +79,7 @@ public class SaveLoadHanlder
         if (Tex2D.LoadImage(FileData))
         {
             Sprite s = Sprite.Create(Tex2D, new Rect(0, 0, Tex2D.width, Tex2D.height), new Vector2(0.5f, 0.5f));
-            WeaponManager.Instance.AddSpriteData(new SpriteData(name, s));
+            ItemManager.Instance.AddSpriteData(new SpriteData(name, s));
         }
     }
 
@@ -95,13 +99,17 @@ public class SaveLoadHanlder
 
     }
 
-    public static void LoadWeaponData()
+    public static List<WeaponData> LoadWeaponData()
     {
         string dirPath = Application.persistentDataPath + PlayerMadeDir + weaponsDir;
         FileInfo[] files = TryGetFiles(dirPath, "*.dat");
         List<string> filesToGo = new List<string>();
-        if (files == null) return;
+        if (files == null) return null;
+
         FileStream fs = null;
+
+        List<WeaponData> weapons = new List<WeaponData>();
+
         foreach (FileInfo fi in files)
         {
             try
@@ -110,7 +118,7 @@ public class SaveLoadHanlder
                 BinaryFormatter bf = new BinaryFormatter();
                 WeaponData wd = (WeaponData)bf.Deserialize(fs);
                 fs.Close();
-                WeaponManager.Instance.AddWeapon(wd, WeaponSortType.playerMade);
+                weapons.Add(wd);
             }
             catch (Exception ex)
             {
@@ -123,11 +131,15 @@ public class SaveLoadHanlder
                 filesToGo.Add(fi.Name);
             }
         }
+
+
         foreach (string n in filesToGo)
         {
             File.Delete(dirPath + n);
         }
 
+
+        return weapons;
     }
 
     public static void Save<T>(T arg, string SavePath, bool needsDefaultPath = false)
@@ -204,9 +216,4 @@ public class SaveLoadHanlder
                 System.IO.Directory.CreateDirectory(path + PlayerMadeDir + weaponsDir);
         }
     }
-}
-public interface ISave
-{
-    void LoadSuccess(object obj);
-    void LoadFailed();
 }

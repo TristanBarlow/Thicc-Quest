@@ -2,10 +2,7 @@
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Xml.Serialization;
-using System.Xml;
-using System.Runtime.Serialization;
+using UnityEngine;
 
 [System.Serializable]
 public enum AffType
@@ -20,7 +17,30 @@ public class BaseAffinityData
     public string title;
     public List<AffType> Weak;
     public List<AffType> Strong;
-    public UnityEngine.Color col;
+    public Color col;
+
+    public bool IsColorSimilar(float threshold, Color compCol)
+    {
+        if (col == null) return false;
+
+        Vector4 difference = col - compCol;
+
+        float abs = Mathf.Abs(difference.magnitude);
+
+        return abs < threshold;
+    }
+
+    public float ColorDifference(Color compCol)
+    {
+        if (col == null) return 0;
+
+        Vector4 difference = col - compCol;
+
+        float abs = Mathf.Abs(difference.magnitude);
+
+        return abs;
+    }
+
 }
 
 [System.Serializable]
@@ -43,6 +63,10 @@ public class AffinityData
     {
         GetAffValue(aff).value += delta;
     }
+    public void SetAffinityValue(AffType aff, float val)
+    {
+        GetAffValue(aff).value = val;
+    }
 
     public Affinity GetAffValue(AffType t)
     {
@@ -53,6 +77,16 @@ public class AffinityData
         return new Affinity(AffType.none, 0);
     }
     public List<Affinity> GetAffinities() { return affinities; }
+
+    public void PrintMe()
+    {
+        string str = "";
+        foreach (Affinity aff in affinities)
+        {
+            str += aff.type + ": " + aff.value+ "\n";
+        }
+        Debug.Log(str);
+    }
 
     public float AffinityEvaluation()
     {

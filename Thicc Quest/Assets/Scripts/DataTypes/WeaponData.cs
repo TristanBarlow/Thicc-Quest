@@ -11,7 +11,9 @@ public class WeaponData : ItemData
     public AffinityData affinities = new AffinityData();
 
     public WeaponData()
-    { type = ItemType.weapon; }
+    {
+        type = ItemType.weapon;
+    }
 
     public WeaponData(string n, Sprite s, string sID, int d, AffinityData aff)
     {

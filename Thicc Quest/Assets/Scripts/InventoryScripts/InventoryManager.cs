@@ -50,6 +50,19 @@ public class InventoryManager : MonoBehaviour
             weaponSlot.GetComponent<SpriteRenderer>().sprite = w.sprite;
             return true;
         }
+
         return false;
+    }
+
+    public bool DestroyAllOfItem(ItemData id)
+    {
+        bool b = true;
+        while (b)
+        {
+            b = inventory.RemoveItemByID(id.name);
+        }
+        SaveLoadHanlder.DeleteWeapon(id.name);
+        SaveLoadHanlder.Save(inventory, "/Inventory.dat", true);
+        return true;
     }
 }

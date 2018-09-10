@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public enum ItemType
 {
-    item, weapon, armour, all
+    item, weapon, armour, all, leg, arm, foot, head, necklace, ring,body
 }
 
 [System.Serializable]
@@ -22,6 +22,7 @@ public class BaseStat
 public class ItemData
 {
     public ItemType  type = ItemType.item;
+    public ItemType subType = ItemType.item;
     public string name =  "";
     public string uID = "";
     public string spriteID = "";
@@ -43,7 +44,7 @@ public class ItemData
                 switch (type)
                 {
                     case ItemType.weapon:
-                        spr = WeaponManager.Instance.GetSpriteFromId(spriteID);
+                        spr = ItemManager.Instance.GetSpriteFromId(spriteID);
                         break;
                 }
             }
